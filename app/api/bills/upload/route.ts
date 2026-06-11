@@ -46,7 +46,6 @@ export async function POST(req: NextRequest) {
     const { data: profile } = await auth.supabase
       .from("daily_profile")
       .select("*")
-      .eq("id", 1)
       .maybeSingle() as { data: any | null };
 
     let billsData: any[] = [];

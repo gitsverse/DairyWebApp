@@ -32,6 +32,23 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
+  const SUPERADMIN_EMAIL = "atifazmi2005@gmail.com";
+
+  // Protect /admin/dashboard - superadmin only
+  if (path.startsWith("/admin/dashboard")) {
+    if (!user || user.email !== SUPERADMIN_EMAIL) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/login";
+      return NextResponse.redirect(url, { status: 303 });
+    }
+  }
+
+  // Prevent logged-in superadmin from seeing admin login
+  if (path === "/admin/login" && user && user.email === SUPERADMIN_EMAIL) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin/dashboard";
+    return NextResponse.redirect(url, { status: 303 });
+  }
 
   if (path === "/" && user) {
     const url = request.nextUrl.clone();
@@ -72,3 +89,4 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse;
 }
+

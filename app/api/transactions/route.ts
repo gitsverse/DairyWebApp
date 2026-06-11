@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
         payment_mode,
         date: date || new Date().toISOString().slice(0, 10),
         note,
+        user_id: auth.user.id,
       },
     ])
     .select()

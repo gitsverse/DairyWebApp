@@ -92,6 +92,7 @@ export async function POST(req: NextRequest) {
         shift,
         quantity,
         price_per_unit,
+        user_id: auth.user.id,
       },
     ])
     .select()

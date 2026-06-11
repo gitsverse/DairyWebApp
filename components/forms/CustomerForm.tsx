@@ -69,9 +69,15 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ customer, onSuccess }) => {
           onSuccess({ id: customer.id });
         }
       } else {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) {
+          setError("No authenticated user session found.");
+          setIsSubmitting(false);
+          return;
+        }
         const { data: created, error: submissionError } = await supabaseClient
           .from("daily_customers" as any)
-          .insert([customerData] as any)
+          .insert([{ ...customerData, user_id: user.id }] as any)
           .select("id")
           .single() as { data: any | null; error: any };
         if (submissionError) {

@@ -44,11 +44,7 @@ function createRealSupabase(): AppSupabaseClient {
     return createNoopSupabase();
   }
 
-  return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey, {
-    global: {
-      fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' }),
-    },
-  });
+  return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
 }
 
 // Important: do NOT call createBrowserClient with empty strings at module scope.

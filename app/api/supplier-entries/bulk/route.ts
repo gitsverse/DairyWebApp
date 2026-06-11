@@ -101,7 +101,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 4. Filter out dates that already exist
     const toInsert = candidates.filter((c) => !existingSet.has(`${c.date}:${c.shift}`));
     const skippedCount = candidates.length - toInsert.length;
 
@@ -114,6 +113,7 @@ export async function POST(req: NextRequest) {
         shift: c.shift,
         quantity,
         price_per_unit,
+        user_id: auth.user.id,
       }));
 
       const { error: insErr } = await auth.supabase

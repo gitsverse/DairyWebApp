@@ -9,7 +9,6 @@ export async function GET() {
   const { data, error } = await auth.supabase
     .from("daily_profile" as any)
     .select("*")
-    .eq("id", 1)
     .maybeSingle() as { data: any | null; error: any };
 
   if (error) return json({ error: error.message }, { status: 500 });
@@ -34,11 +33,23 @@ export async function PATCH(req: NextRequest) {
     if (body[key] !== undefined) payload[key] = body[key];
   }
 
+  // Fetch existing profile ID to perform an update on conflict
+  const { data: existingProfile } = await auth.supabase
+    .from("daily_profile" as any)
+    .select("id")
+    .maybeSingle() as { data: any | null };
+
+  const profileId = existingProfile?.id;
+
   const { data, error } = await auth.supabase
     .from("daily_profile" as any)
     .upsert(
-      { id: 1, ...payload, updated_at: new Date().toISOString() },
-      { onConflict: "id" }
+      {
+        ...(profileId ? { id: profileId } : {}),
+        ...payload,
+        user_id: auth.user.id,
+        updated_at: new Date().toISOString(),
+      }
     )
     .select()
     .single() as { data: any | null; error: any };
@@ -46,3 +57,4 @@ export async function PATCH(req: NextRequest) {
   if (error) return json({ error: error.message }, { status: 500 });
   return json(data);
 }
+

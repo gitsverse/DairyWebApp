@@ -217,9 +217,14 @@ const ProductForm = ({
         );
         return;
       }
-      const payload = { name: normalized, default_rate: rateNum, unit };
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) {
+        setError("No authenticated user session found.");
+        return;
+      }
+      const payload = { name: normalized, default_rate: rateNum, unit, user_id: user.id };
       const { error } = product
-        ? await supabaseClient.from("daily_products" as any).update(payload).eq("id", product.id)
+        ? await supabaseClient.from("daily_products" as any).update({ name: normalized, default_rate: rateNum, unit }).eq("id", product.id)
         : await supabaseClient.from("daily_products" as any).insert([payload]);
 
       if (error) {

@@ -125,7 +125,7 @@ const CustomersPage = () => {
         }
       }
 
-      const { data: profile } = await supabaseClient.from("daily_profile").select("dairy_name").eq("id", 1).maybeSingle() as { data: any | null };
+      const { data: profile } = await supabaseClient.from("daily_profile").select("dairy_name").maybeSingle() as { data: any | null };
 
       const list: CustomerSummary[] = (rows || []).map((c) => {
         const sales = salesMap.get(c.id) || 0;

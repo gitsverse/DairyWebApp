@@ -68,7 +68,6 @@ export default function SupplierAdvancesPage() {
       const { data: profile } = await supabaseClient
         .from("daily_profile")
         .select("dairy_name")
-        .eq("id", 1)
         .maybeSingle() as { data: any | null };
 
       const purchasesMap = new Map<string, number>();
@@ -133,12 +132,20 @@ export default function SupplierAdvancesPage() {
     setIsSubmitting(true);
 
     const today = toLocalDateString();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+      alert("No authenticated user session found.");
+      setIsSubmitting(false);
+      return;
+    }
+
     const { error } = await supabaseClient.from("daily_supplier_transactions" as any).insert({
       supplier_id: selectedSupplier.supplier_id,
       type,
       amount: Number(amount),
       payment_mode: paymentMode,
       date: today,
+      user_id: user.id,
     });
 
     if (!error) {

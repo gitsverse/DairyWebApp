@@ -79,6 +79,12 @@ const SupplierTransactionForm: React.FC<SupplierTransactionFormProps> = ({
           .eq("id", transaction.id);
         submissionError = error;
       } else {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) {
+          setError("No authenticated user session found.");
+          setIsSubmitting(false);
+          return;
+        }
         const { error } = await supabaseClient
           .from("daily_supplier_transactions" as any)
           .insert([
@@ -89,6 +95,7 @@ const SupplierTransactionForm: React.FC<SupplierTransactionFormProps> = ({
               payment_mode: paymentMode,
               date,
               note: note.trim() ? note.trim() : null,
+              user_id: user.id,
             },
           ]);
         submissionError = error;

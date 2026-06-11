@@ -87,7 +87,17 @@ export default function LoginPageClient() {
             ← {t("auth.backHome")}
           </Link>
         </p>
+
+        <div className="text-center mt-6 border-t border-border/40 pt-4">
+          <Link 
+            href="/admin/login" 
+            className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+          >
+            Admin Access
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
+

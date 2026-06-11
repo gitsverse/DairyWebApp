@@ -183,6 +183,46 @@ export type Database = {
           balance: number;
         }[];
       };
+      get_subscription_status: {
+        Args: {
+          p_user_id: string;
+        };
+        Returns: {
+          plan_name: string;
+          days_remaining: number;
+          end_date: string;
+          is_active: boolean;
+          price_inr: number;
+        }[];
+      };
+      purchase_plan: {
+        Args: {
+          p_user_id: string;
+          p_plan_name: string;
+          p_payment_ref: string;
+          p_payment_mode: string;
+        };
+        Returns: string;
+      };
+      admin_get_all_users: {
+        Args: Record<string, never>;
+        Returns: {
+          user_id: string;
+          email: string;
+          full_name: string;
+          plan_name: string;
+          status: string;
+          end_date: string;
+          days_remaining: number;
+        }[];
+      };
+      admin_adjust_plan_days: {
+        Args: {
+          p_user_id: string;
+          p_days_delta: number;
+        };
+        Returns: string;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

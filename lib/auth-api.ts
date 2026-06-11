@@ -1,8 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
+import { json } from "@/lib/http";
 
 export async function getAuthenticatedSupabase() {
-  // Temporary hardcoded auth uses middleware cookie gating for pages and APIs.
-  // API routes can assume requests already passed middleware; keep signature compatible.
   const supabase = await createClient();
-  return { ok: true as const, supabase, user: null as any, response: null as any };
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      ok: false as const,
+      supabase,
+      user: null as any,
+      response: json({ error: "Unauthorized" }, { status: 401 }),
+    };
+  }
+
+  return { ok: true as const, supabase, user, response: null as any };
 }
+

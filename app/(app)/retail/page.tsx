@@ -98,12 +98,20 @@ export default function RetailPage() {
     setIsSubmitting(true);
     setMessage(null);
 
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+      setMessage({ type: "error", text: "No authenticated user session found." });
+      setIsSubmitting(false);
+      return;
+    }
+
     const { error } = await supabaseClient.from("daily_retail_sales" as any).insert({
       date: date,
       product_id: parseInt(selectedProductId),
       quantity: Number(quantity),
       total_amount: totalAmount,
       payment_mode: paymentMode,
+      user_id: user.id,
     } as any);
 
     if (error) {

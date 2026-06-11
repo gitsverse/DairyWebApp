@@ -16,6 +16,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Button from "@/components/ui/Button";
 import { useI18n } from "@/components/i18n/LanguageProvider";
+import { useSubscription } from "@/lib/useSubscription";
 
 const customerNavigation = [
   { key: "nav.dashboard", href: "/dashboard", icon: HomeIcon },
@@ -35,8 +36,10 @@ const supplierNavigation = [
 const bottomNavigation = [
   { key: "nav.retail", href: "/retail", icon: ShoppingCartIcon },
   { key: "nav.products", href: "/products", icon: CubeIcon },
+  { key: "nav.subscription", href: "/subscription", icon: BanknotesIcon },
   { key: "nav.settings", href: "/settings", icon: Cog6ToothIcon },
 ];
+
 type SidebarProps = {
   mobileOpen?: boolean;
   onNavigate?: () => void;
@@ -47,6 +50,9 @@ const Sidebar = ({ mobileOpen = false, onNavigate }: SidebarProps) => {
   const router = useRouter();
   const { t } = useI18n();
   const [signingOut, setSigningOut] = useState(false);
+  const { isActive, planName, daysRemaining, loading } = useSubscription();
+
+  const isLocked = !loading && !isActive;
 
   const signOut = async () => {
     setSigningOut(true);
@@ -57,6 +63,40 @@ const Sidebar = ({ mobileOpen = false, onNavigate }: SidebarProps) => {
     } finally {
       setSigningOut(false);
     }
+  };
+
+  const renderNavItem = (item: { key: string; href: string; icon: any }) => {
+    const disabled = isLocked && item.href !== "/subscription";
+
+    return (
+      <Link
+        key={item.key}
+        href={disabled ? "#" : item.href}
+        onClick={(e) => {
+          if (disabled) {
+            e.preventDefault();
+            return;
+          }
+          onNavigate?.();
+        }}
+        className={`group flex min-h-[44px] items-center rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-300 touch-manipulation relative overflow-hidden ${
+          disabled
+            ? "opacity-40 cursor-not-allowed text-slate-400"
+            : pathname.startsWith(item.href)
+            ? "bg-primary/10 text-primary shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] ring-1 ring-primary/20"
+            : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+        }`}
+      >
+        {pathname.startsWith(item.href) && !disabled && (
+          <div className="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full shadow-[0_0_10px_rgba(5,150,105,0.4)]" />
+        )}
+        <item.icon className={`mr-3 h-5 w-5 shrink-0 transition-transform duration-300 ${disabled ? "text-slate-400 opacity-60" : pathname.startsWith(item.href) ? "text-primary opacity-100 scale-110" : "opacity-70 group-hover:scale-110 group-hover:text-primary"}`} />
+        <span className="relative z-10">{t(item.key)}</span>
+        {disabled && (
+          <span className="ml-auto text-xs opacity-60">🔒</span>
+        )}
+      </Link>
+    );
   };
 
   return (
@@ -71,7 +111,7 @@ const Sidebar = ({ mobileOpen = false, onNavigate }: SidebarProps) => {
       <div className="h-20 flex items-center justify-center border-b border-slate-100 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent rounded-t-3xl md:block hidden pointer-events-none" />
         <Link
-          href="/dashboard"
+          href={isLocked ? "/subscription" : "/dashboard"}
           onClick={() => onNavigate?.()}
           className="text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent z-10 drop-shadow-sm"
         >
@@ -79,24 +119,7 @@ const Sidebar = ({ mobileOpen = false, onNavigate }: SidebarProps) => {
         </Link>
       </div>
       <nav className="flex-1 px-4 py-6 overflow-y-auto overflow-x-hidden space-y-1.5">
-        {customerNavigation.map((item) => (
-          <Link
-            key={item.key}
-            href={item.href}
-            onClick={() => onNavigate?.()}
-            className={`group flex min-h-[44px] items-center rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-300 touch-manipulation relative overflow-hidden ${
-              pathname.startsWith(item.href)
-                ? "bg-primary/10 text-primary shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] ring-1 ring-primary/20"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-            }`}
-          >
-            {pathname.startsWith(item.href) && (
-              <div className="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full shadow-[0_0_10px_rgba(5,150,105,0.4)]" />
-            )}
-            <item.icon className={`mr-3 h-5 w-5 shrink-0 transition-transform duration-300 ${pathname.startsWith(item.href) ? "text-primary opacity-100 scale-110" : "opacity-70 group-hover:scale-110 group-hover:text-primary"}`} />
-            <span className="relative z-10">{t(item.key)}</span>
-          </Link>
-        ))}
+        {customerNavigation.map(renderNavItem)}
 
         {/* Suppliers / Buyers Section */}
         <div className="pt-3 pb-1">
@@ -104,24 +127,7 @@ const Sidebar = ({ mobileOpen = false, onNavigate }: SidebarProps) => {
             {t("nav.suppliers")}
           </p>
         </div>
-        {supplierNavigation.map((item) => (
-          <Link
-            key={item.key}
-            href={item.href}
-            onClick={() => onNavigate?.()}
-            className={`group flex min-h-[44px] items-center rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-300 touch-manipulation relative overflow-hidden ${
-              pathname.startsWith(item.href)
-                ? "bg-primary/10 text-primary shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] ring-1 ring-primary/20"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-            }`}
-          >
-            {pathname.startsWith(item.href) && (
-              <div className="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full shadow-[0_0_10px_rgba(5,150,105,0.4)]" />
-            )}
-            <item.icon className={`mr-3 h-5 w-5 shrink-0 transition-transform duration-300 ${pathname.startsWith(item.href) ? "text-primary opacity-100 scale-110" : "opacity-70 group-hover:scale-110 group-hover:text-primary"}`} />
-            <span className="relative z-10">{t(item.key)}</span>
-          </Link>
-        ))}
+        {supplierNavigation.map(renderNavItem)}
 
         {/* Bottom: Retail, Products, Settings */}
         <div className="pt-3 pb-1">
@@ -129,26 +135,25 @@ const Sidebar = ({ mobileOpen = false, onNavigate }: SidebarProps) => {
             {t("nav.settings")}
           </p>
         </div>
-        {bottomNavigation.map((item) => (
-          <Link
-            key={item.key}
-            href={item.href}
-            onClick={() => onNavigate?.()}
-            className={`group flex min-h-[44px] items-center rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-300 touch-manipulation relative overflow-hidden ${
-              pathname.startsWith(item.href)
-                ? "bg-primary/10 text-primary shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] ring-1 ring-primary/20"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-            }`}
-          >
-            {pathname.startsWith(item.href) && (
-              <div className="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full shadow-[0_0_10px_rgba(5,150,105,0.4)]" />
-            )}
-            <item.icon className={`mr-3 h-5 w-5 shrink-0 transition-transform duration-300 ${pathname.startsWith(item.href) ? "text-primary opacity-100 scale-110" : "opacity-70 group-hover:scale-110 group-hover:text-primary"}`} />
-            <span className="relative z-10">{t(item.key)}</span>
-          </Link>
-        ))}
+        {bottomNavigation.map(renderNavItem)}
       </nav>
       <div className="p-4 border-t border-slate-100 bg-slate-50/50 md:rounded-b-3xl">
+        {!loading && (
+          <div className="mb-4 px-3 py-2.5 rounded-2xl border border-slate-200/50 bg-white text-xs space-y-1.5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 font-bold uppercase tracking-wider text-[9px]">Plan Status</span>
+              <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase ${isActive ? "bg-emerald-100 text-emerald-800 border border-emerald-200" : "bg-rose-100 text-rose-800 border border-rose-200"}`}>
+                {planName ? planName.replace("_", " ") : "No Plan"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between font-bold text-slate-700 pt-0.5">
+              <span>Remaining:</span>
+              <span className={daysRemaining > 0 ? "text-primary" : "text-rose-600"}>
+                {daysRemaining > 0 ? `${daysRemaining} days` : "Expired"}
+              </span>
+            </div>
+          </div>
+        )}
         <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold px-2 mb-3">
           <a 
             href="https://www.shaibyasolutions.com/" 

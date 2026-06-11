@@ -125,7 +125,7 @@ const SuppliersPage = () => {
         }
       }
 
-      const { data: profile } = await supabaseClient.from("daily_profile").select("dairy_name").eq("id", 1).maybeSingle() as { data: any | null };
+      const { data: profile } = await supabaseClient.from("daily_profile").select("dairy_name").maybeSingle() as { data: any | null };
 
       const list: SupplierSummary[] = (rows || []).map((s) => {
         const purchases = purchasesMap.get(s.id) || 0;

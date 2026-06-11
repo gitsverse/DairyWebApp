@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await auth.supabase
     .from("daily_customers" as any)
-    .insert([{ name, phone, address, default_milk_qty, custom_milk_rate }] as any)
+    .insert([{ name, phone, address, default_milk_qty, custom_milk_rate, user_id: auth.user.id }] as any)
     .select()
     .single();
 

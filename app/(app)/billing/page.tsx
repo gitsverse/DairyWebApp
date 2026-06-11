@@ -93,7 +93,7 @@ const BillingPage = () => {
           setProfile(prof);
         } else {
           // Fallback to supabaseClient direct select
-          const { data: prof } = await supabaseClient.from("daily_profile").select("*").eq("id", 1).maybeSingle();
+          const { data: prof } = await supabaseClient.from("daily_profile").select("*").maybeSingle();
           if (prof) setProfile(prof);
         }
       } catch (e) {

@@ -69,9 +69,15 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ supplier, onSuccess }) => {
           onSuccess({ id: supplier.id });
         }
       } else {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) {
+          setError("No authenticated user session found.");
+          setIsSubmitting(false);
+          return;
+        }
         const { data: created, error: submissionError } = await supabaseClient
           .from("daily_suppliers" as any)
-          .insert([supplierData] as any)
+          .insert([{ ...supplierData, user_id: user.id }] as any)
           .select("id")
           .single() as { data: any | null; error: any };
         if (submissionError) {
