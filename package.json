@@ -1,0 +1,46 @@
+{
+  "name": "dairy-management-app",
+  "version": "1.0.0",
+  "description": "A full-stack dairy management web application built with Next.js and Supabase.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "create-user": "node scripts/create-user.mjs",
+    "create-demo-user": "node scripts/create-demo-user.mjs",
+    "inspect": "node scratch/inspect_atif.mjs",
+    "download-fonts": "node scripts/download-fonts.mjs"
+  },
+  "dependencies": {
+    "@fontsource/outfit": "^5.2.8",
+    "@heroicons/react": "^2.2.0",
+    "@react-pdf/renderer": "^4.3.3",
+    "@supabase/ssr": "^0.10.0",
+    "@supabase/supabase-js": "^2.0.0",
+    "autoprefixer": "^10.0.0",
+    "date-fns": "^4.2.1",
+    "next": "latest",
+    "postcss": "^8.0.0",
+    "react": "latest",
+    "react-dom": "latest",
+    "tailwindcss": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.2",
+    "typescript": "^5.9.3"
+  },
+  "keywords": [
+    "dairy",
+    "management",
+    "nextjs",
+    "supabase",
+    "pwa"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
