@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 import "../styles/globals.css";
 import ClientI18nProvider from "@/components/i18n/ClientI18nProvider";
 import { ToastProvider } from "@/components/ui/toast";
+import PWAInstallBanner from "@/components/PWAInstallBanner";
 
 const outfit = Outfit({ 
   subsets: ["latin", "latin-ext"], 
@@ -15,14 +16,22 @@ const outfit = Outfit({
 import type { Viewport } from "next";
 
 export const metadata = {
-  title: "Dairy Management Pro — Shaibya Solutions",
+  title: "Dairy Management Pro — Atif Azmi",
   description: "Modern dairy management system",
+  manifest: "/manifest.json",
+  themeColor: "#14b8a6",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "DairyWeb",
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: "cover",
 };
 
@@ -31,7 +40,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning className={`${outfit.variable}`}>
       <body suppressHydrationWarning className="min-h-screen antialiased bg-page text-foreground font-sans">
         <ClientI18nProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <PWAInstallBanner />
+            {children}
+          </ToastProvider>
         </ClientI18nProvider>
       </body>
     </html>

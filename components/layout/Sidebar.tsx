@@ -155,14 +155,7 @@ const Sidebar = ({ mobileOpen = false, onNavigate }: SidebarProps) => {
           </div>
         )}
         <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold px-2 mb-3">
-          <a 
-            href="https://www.shaibyasolutions.com/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hover:text-primary transition-colors"
-          >
-            Shaibya Solutions
-          </a>
+          Atif Azmi
         </p>
         <Button
           variant="outline"

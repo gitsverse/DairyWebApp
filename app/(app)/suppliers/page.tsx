@@ -336,89 +336,159 @@ const SuppliersPage = () => {
               : "No supplier matches your search."}
           </p>
         ) : filteredSuppliers.length === 0 ? null : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground uppercase bg-secondary/80">
-                <tr>
-                  <th className="px-4 py-3">{lang === "hi" ? "आपूर्तिकर्ता विवरण" : "Supplier Details"}</th>
-                  <th className="px-4 py-3 text-right">Total Purchases</th>
-                  <th className="px-4 py-3 text-right">Total Paid</th>
-                  <th className="px-4 py-3 text-right">{lang === "hi" ? "बैलेंस" : "Balance"}</th>
-                  <th className="px-4 py-3 text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredSuppliers.map((s) => (
-                  <tr
-                    key={s.id}
-                    className="border-b border-border hover:bg-secondary/40 transition-colors"
-                  >
-                    <td className="px-4 py-2">
-                      <Link
-                        href={`/supplier-ledger/${s.id}`}
-                        className="font-semibold text-primary hover:underline"
-                      >
-                        {s.name}
-                      </Link>
-                      {s.phone && (
-                        <p className="text-xs text-muted-foreground">{s.phone}</p>
-                      )}
-                      {s.address && (
-                        <p className="text-xs text-muted-foreground">{s.address}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-right font-medium">
-                      रु{s.total_purchases.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-2 text-right text-emerald-700 font-medium">
-                      रु{s.total_paid.toFixed(2)}
-                    </td>
-                    <td
-                      className={`px-4 py-2 text-right font-bold ${
-                        s.balance > 0 ? "text-destructive" : "text-emerald-700"
-                      }`}
-                    >
-                      रु{Math.abs(s.balance).toFixed(2)}
-                    </td>
-                    <td className="px-4 py-2 text-center">
-                      <div className="flex justify-center items-center gap-2 flex-wrap">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => openModalForEdit(s)}
-                        >
-                          {lang === "hi" ? "संपादित करें" : "Edit"}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => {
-                            setPaymentSupplier(s);
-                            setIsPaymentOpen(true);
-                          }}
-                        >
-                          {lang === "hi" ? "भुगतान दें" : "Give payment"}
-                        </Button>
-                        <Link href={`/supplier-ledger/${s.id}`}>
-                          <Button type="button" variant="outline" className="text-indigo-600 hover:bg-indigo-50 border-indigo-200">
-                            {lang === "hi" ? "लेजर देखें" : "View Ledger"}
-                          </Button>
-                        </Link>
-                        {/* Red Deletion Icon Button */}
-                        <button
-                          onClick={() => openDeleteConfirm(s)}
-                          className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-xl transition-all inline-flex items-center"
-                          title={lang === "hi" ? "आपूर्तिकर्ता हटाएं" : "Delete supplier"}
-                        >
-                          <TrashIcon className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </td>
+          <>
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-muted-foreground uppercase bg-secondary/80">
+                  <tr>
+                    <th className="px-4 py-3">{lang === "hi" ? "आपूर्तिकर्ता विवरण" : "Supplier Details"}</th>
+                    <th className="px-4 py-3 text-right">Total Purchases</th>
+                    <th className="px-4 py-3 text-right">Total Paid</th>
+                    <th className="px-4 py-3 text-right">{lang === "hi" ? "बैलेंस" : "Balance"}</th>
+                    <th className="px-4 py-3 text-center">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {filteredSuppliers.map((s) => (
+                    <tr
+                      key={s.id}
+                      className="border-b border-border hover:bg-secondary/40 transition-colors"
+                    >
+                      <td className="px-4 py-2">
+                        <Link
+                          href={`/supplier-ledger/${s.id}`}
+                          className="font-semibold text-primary hover:underline"
+                        >
+                          {s.name}
+                        </Link>
+                        {s.phone && (
+                          <p className="text-xs text-muted-foreground">{s.phone}</p>
+                        )}
+                        {s.address && (
+                          <p className="text-xs text-muted-foreground">{s.address}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-right font-medium">
+                        रु{s.total_purchases.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-right text-emerald-700 font-medium">
+                        रु{s.total_paid.toFixed(2)}
+                      </td>
+                      <td
+                        className={`px-4 py-2 text-right font-bold ${
+                          s.balance > 0 ? "text-destructive" : "text-emerald-700"
+                        }`}
+                      >
+                        रु{Math.abs(s.balance).toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <div className="flex justify-center items-center gap-2 flex-wrap">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="touch-manipulation min-h-[44px]"
+                            onClick={() => openModalForEdit(s)}
+                          >
+                            {lang === "hi" ? "संपादित करें" : "Edit"}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="touch-manipulation min-h-[44px]"
+                            onClick={() => {
+                              setPaymentSupplier(s);
+                              setIsPaymentOpen(true);
+                            }}
+                          >
+                            {lang === "hi" ? "भुगतान दें" : "Give payment"}
+                          </Button>
+                          <Link href={`/supplier-ledger/${s.id}`}>
+                            <Button type="button" variant="outline" className="text-indigo-600 hover:bg-indigo-50 border-indigo-200 touch-manipulation min-h-[44px]">
+                              {lang === "hi" ? "लेजर देखें" : "View Ledger"}
+                            </Button>
+                          </Link>
+                          {/* Red Deletion Icon Button */}
+                          <button
+                            onClick={() => openDeleteConfirm(s)}
+                            className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-xl transition-all inline-flex items-center touch-manipulation min-h-[44px] min-w-[44px] justify-center"
+                            title={lang === "hi" ? "आपूर्तिकर्ता हटाएं" : "Delete supplier"}
+                          >
+                            <TrashIcon className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card List */}
+            <div className="grid grid-cols-1 gap-3 md:hidden">
+              {filteredSuppliers.map((s) => (
+                <div key={`mob-${s.id}`} className="border border-border rounded-xl p-4 space-y-3 bg-white shadow-sm">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <Link href={`/supplier-ledger/${s.id}`} className="font-bold text-primary text-base hover:underline">{s.name}</Link>
+                      {s.phone && <p className="text-xs text-muted-foreground">{s.phone}</p>}
+                      {s.address && <p className="text-xs text-muted-foreground">{s.address}</p>}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{lang === "hi" ? "बैलेंस" : "Balance"}</p>
+                      <p className={`font-bold ${s.balance > 0 ? "text-destructive" : "text-emerald-700"}`}>
+                        रु{Math.abs(s.balance).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-sm bg-secondary/30 rounded-lg p-2">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Total Purchases</p>
+                      <p className="font-medium">रु{s.total_purchases.toFixed(2)}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Total Paid</p>
+                      <p className="font-medium text-emerald-700">रु{s.total_paid.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="touch-manipulation min-h-[44px] flex-1 sm:flex-none justify-center"
+                      onClick={() => {
+                        setPaymentSupplier(s);
+                        setIsPaymentOpen(true);
+                      }}
+                    >
+                      {lang === "hi" ? "भुगतान दें" : "Give payment"}
+                    </Button>
+                    <Link href={`/supplier-ledger/${s.id}`} className="flex-1 sm:flex-none">
+                      <Button type="button" variant="outline" className="w-full text-indigo-600 hover:bg-indigo-50 border-indigo-200 touch-manipulation min-h-[44px] justify-center">
+                        {lang === "hi" ? "लेजर" : "Ledger"}
+                      </Button>
+                    </Link>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="touch-manipulation min-h-[44px] min-w-[44px] px-0 justify-center"
+                      onClick={() => openModalForEdit(s)}
+                      title="Edit"
+                    >
+                      ✎
+                    </Button>
+                    <button
+                      onClick={() => openDeleteConfirm(s)}
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-xl transition-all inline-flex items-center justify-center touch-manipulation min-h-[44px] min-w-[44px]"
+                      title="Delete"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </Card>
     </div>

@@ -406,48 +406,113 @@ const LedgerPage = () => {
       </div>
 
       <Card title="Transaction History">
-        <table className="w-full text-sm text-left">
-          <thead className="text-xs text-muted-foreground uppercase bg-secondary/80">
-            <tr>
-              <th className="px-4 py-3">Date</th>
-              <th className="px-4 py-3">Description</th>
-              <th className="px-4 py-3 text-right">Debit (Sale)</th>
-              <th className="px-4 py-3 text-right">Credit (Paid)</th>
-              <th className="px-4 py-3 text-right">Balance</th>
-              <th className="px-4 py-3 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+        <>
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-muted-foreground uppercase bg-secondary/80">
+                <tr>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Description</th>
+                  <th className="px-4 py-3 text-right">Debit (Sale)</th>
+                  <th className="px-4 py-3 text-right">Credit (Paid)</th>
+                  <th className="px-4 py-3 text-right">Balance</th>
+                  <th className="px-4 py-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ledgerItems.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                      No entries or payments yet for this customer.
+                    </td>
+                  </tr>
+                ) : null}
+                {ledgerItems.map((item) => (
+                  <tr key={item.id} className="border-b border-border hover:bg-secondary/40">
+                    <td className="px-4 py-2 font-medium">
+                      {formatDate(item.date)}
+                    </td>
+                    <td className="px-4 py-2">{item.description}</td>
+                    <td className="px-4 py-2 text-right text-destructive/90">
+                      {item.debit > 0 ? `₹${item.debit.toFixed(2)}` : "—"}
+                    </td>
+                    <td className="px-4 py-2 text-right text-emerald-700">
+                      {item.credit > 0 ? `₹${item.credit.toFixed(2)}` : "—"}
+                    </td>
+                    <td
+                      className={`px-4 py-2 text-right font-medium ${signedBalanceClass(item.balance)}`}
+                    >
+                      ₹{Math.abs(item.balance).toFixed(2)}
+                    </td>
+                    <td className="px-4 py-2 text-center">
+                      <div className="flex justify-center gap-2 flex-wrap">
+                        {item.type === "entry" ? (
+                          <Button
+                            variant="outline"
+                            className="px-2 py-1 text-xs touch-manipulation min-h-[44px]"
+                            onClick={() => openEditEntryModal(item.original_item)}
+                          >
+                            Edit
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            className="px-2 py-1 text-xs touch-manipulation min-h-[44px]"
+                            onClick={() => openEditTransactionModal(item.original_item)}
+                          >
+                            Edit
+                          </Button>
+                        )}
+                        <Button
+                          variant="destructive"
+                          className="px-2 py-1 text-xs touch-manipulation min-h-[44px]"
+                          onClick={() => handleDelete(item)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 md:hidden">
             {ledgerItems.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                  No entries or payments yet for this customer.
-                </td>
-              </tr>
-            ) : null}
-            {ledgerItems.map((item) => (
-              <tr key={item.id} className="border-b border-border hover:bg-secondary/40">
-                <td className="px-4 py-2 font-medium">
-                  {formatDate(item.date)}
-                </td>
-                <td className="px-4 py-2">{item.description}</td>
-                <td className="px-4 py-2 text-right text-destructive/90">
-                  {item.debit > 0 ? `₹${item.debit.toFixed(2)}` : "—"}
-                </td>
-                <td className="px-4 py-2 text-right text-emerald-700">
-                  {item.credit > 0 ? `₹${item.credit.toFixed(2)}` : "—"}
-                </td>
-                <td
-                  className={`px-4 py-2 text-right font-medium ${signedBalanceClass(item.balance)}`}
-                >
-                  ₹{Math.abs(item.balance).toFixed(2)}
-                </td>
-                <td className="px-4 py-2 text-center">
-                  <div className="flex justify-center gap-2 flex-wrap">
+              <p className="text-center py-8 text-muted-foreground">
+                No entries or payments yet for this customer.
+              </p>
+            ) : (
+              ledgerItems.map((item) => (
+                <div key={`mob-${item.id}`} className="border border-border rounded-xl p-4 space-y-3 bg-white shadow-sm">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-bold text-base text-foreground">{item.description}</p>
+                      <p className="text-xs text-muted-foreground">{formatDate(item.date)}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Balance</p>
+                      <p className={`font-bold ${signedBalanceClass(item.balance)}`}>
+                        ₹{Math.abs(item.balance).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-sm bg-secondary/30 rounded-lg p-2">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Debit (Sale)</p>
+                      <p className="font-medium text-destructive/90">{item.debit > 0 ? `₹${item.debit.toFixed(2)}` : "—"}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Credit (Paid)</p>
+                      <p className="font-medium text-emerald-700">{item.credit > 0 ? `₹${item.credit.toFixed(2)}` : "—"}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
                     {item.type === "entry" ? (
                       <Button
                         variant="outline"
-                        className="px-2 py-1 text-xs"
+                        className="touch-manipulation min-h-[44px] flex-1 sm:flex-none justify-center"
                         onClick={() => openEditEntryModal(item.original_item)}
                       >
                         Edit
@@ -455,7 +520,7 @@ const LedgerPage = () => {
                     ) : (
                       <Button
                         variant="outline"
-                        className="px-2 py-1 text-xs"
+                        className="touch-manipulation min-h-[44px] flex-1 sm:flex-none justify-center"
                         onClick={() => openEditTransactionModal(item.original_item)}
                       >
                         Edit
@@ -463,17 +528,17 @@ const LedgerPage = () => {
                     )}
                     <Button
                       variant="destructive"
-                      className="px-2 py-1 text-xs"
+                      className="touch-manipulation min-h-[44px] flex-1 sm:flex-none justify-center"
                       onClick={() => handleDelete(item)}
                     >
                       Delete
                     </Button>
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              ))
+            )}
+          </div>
+        </>
       </Card>
     </div>
   );

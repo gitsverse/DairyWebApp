@@ -23,7 +23,7 @@ export default function LandingPageClient() {
       <section className="container max-w-6xl mx-auto px-4 pt-4 pb-20 grid lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-6 animate-fadeUp">
           <p className="text-sm font-semibold text-primary uppercase tracking-wider">
-            Shaibya Solutions
+            Atif Azmi
           </p>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
             {t("public.heroTitleA")}{" "}
@@ -118,12 +118,12 @@ export default function LandingPageClient() {
       <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
         © {new Date().getFullYear()}{" "}
         <a 
-          href="https://www.shaibyasolutions.com/" 
+          href="https://atif-dev.vercel.app/" 
           target="_blank" 
           rel="noopener noreferrer"
           className="hover:text-primary transition-colors font-medium"
         >
-          Shaibya Solutions
+          Atif Azmi
         </a>{" "}
         · Dairy Management Pro
       </footer>

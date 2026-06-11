@@ -1,21 +1,54 @@
 {
-  "name": "Dairy Management App",
-  "short_name": "DairyApp",
-  "description": "A simple and efficient dairy management application for tracking customers, deliveries, and payments.",
-  "start_url": "/",
+  "name": "DairyWeb - Dairy Management",
+  "short_name": "DairyWeb",
+  "description": "Complete dairy business management app",
+  "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#4A90E2",
+  "theme_color": "#14b8a6",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192x192.png",
-      "sizes": "192x192",
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
       "type": "image/png"
     },
     {
-      "src": "icon-512x512.png",
-      "sizes": "512x512",
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
       "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

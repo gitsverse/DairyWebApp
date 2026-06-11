@@ -731,68 +731,110 @@ const EntriesPage = () => {
 
       {/* Entries Table */}
       <Card title={lang === "hi" ? "सभी एंट्री" : "All Entries"}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground uppercase bg-secondary/80">
-              <tr>
-                <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Product</th>
-                <th className="px-4 py-3">Shift</th>
-                <th className="px-4 py-3 text-right">Quantity</th>
-                <th className="px-4 py-3 text-right">Amount</th>
-                <th className="px-4 py-3 text-center print:hidden">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entries.length === 0 ? (
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-muted-foreground uppercase bg-secondary/80">
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-muted-foreground">
-                    {isLoadingEntries
-                      ? lang === "hi"
-                        ? "लोड हो रहा है…"
-                        : "Loading…"
-                      : lang === "hi"
-                        ? "कोई एंट्री नहीं मिली।"
-                        : "No entries found."}
-                  </td>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Customer</th>
+                  <th className="px-4 py-3">Product</th>
+                  <th className="px-4 py-3">Shift</th>
+                  <th className="px-4 py-3 text-right">Quantity</th>
+                  <th className="px-4 py-3 text-right">Amount</th>
+                  <th className="px-4 py-3 text-center print:hidden">Actions</th>
                 </tr>
-              ) : (
-                entries.map((entry) => (
-                  <tr
-                    key={entry.id}
-                    className="border-b border-border hover:bg-secondary/40 transition-colors"
-                  >
-                    <td className="px-4 py-2 font-medium">
-                      {formatDate(entry.date)}
-                    </td>
-                    <td className="px-4 py-2 font-semibold">
-                      {entry.daily_customers?.name ?? "—"}
-                    </td>
-                    <td className="px-4 py-2 text-slate-600">{entry.daily_products?.name ?? "—"}</td>
-                    <td className="px-4 py-2 capitalize text-slate-600">{entry.shift}</td>
-                    <td className="px-4 py-2 text-right font-medium">
-                      {entry.quantity} {entry.daily_products?.unit === "liter" ? (lang === "hi" ? "लीटर" : "liter") : (entry.daily_products?.unit || "")}
-                    </td>
-                    <td className="px-4 py-2 text-right font-bold text-primary">
-                      ₹{Number(entry.total_amount).toFixed(2)}
-                    </td>
-                    {/* Actions cell containing the Edit action button */}
-                    <td className="px-4 py-2 text-center print:hidden">
-                      <button
-                        onClick={() => handleEditClick(entry)}
-                        className="p-1.5 text-primary hover:text-primary-muted hover:bg-primary/10 rounded-xl transition-all inline-flex items-center"
-                        title="Edit entry"
-                      >
-                        <PencilIcon className="w-5 h-5" />
-                      </button>
+              </thead>
+              <tbody>
+                {entries.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-8 text-muted-foreground">
+                      {isLoadingEntries
+                        ? lang === "hi"
+                          ? "लोड हो रहा है…"
+                          : "Loading…"
+                        : lang === "hi"
+                          ? "कोई एंट्री नहीं मिली।"
+                          : "No entries found."}
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : (
+                  entries.map((entry) => (
+                    <tr
+                      key={entry.id}
+                      className="border-b border-border hover:bg-secondary/40 transition-colors"
+                    >
+                      <td className="px-4 py-2 font-medium">
+                        {formatDate(entry.date)}
+                      </td>
+                      <td className="px-4 py-2 font-semibold">
+                        {entry.daily_customers?.name ?? "—"}
+                      </td>
+                      <td className="px-4 py-2 text-slate-600">{entry.daily_products?.name ?? "—"}</td>
+                      <td className="px-4 py-2 capitalize text-slate-600">{entry.shift}</td>
+                      <td className="px-4 py-2 text-right font-medium">
+                        {entry.quantity} {entry.daily_products?.unit === "liter" ? (lang === "hi" ? "लीटर" : "liter") : (entry.daily_products?.unit || "")}
+                      </td>
+                      <td className="px-4 py-2 text-right font-bold text-primary">
+                        ₹{Number(entry.total_amount).toFixed(2)}
+                      </td>
+                      {/* Actions cell containing the Edit action button */}
+                      <td className="px-4 py-2 text-center print:hidden">
+                        <button
+                          onClick={() => handleEditClick(entry)}
+                          className="p-1.5 text-primary hover:text-primary-muted hover:bg-primary/10 rounded-xl transition-all inline-flex items-center touch-manipulation min-h-[44px] min-w-[44px] justify-center"
+                          title="Edit entry"
+                        >
+                          <PencilIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card List */}
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {entries.length === 0 ? (
+              <p className="text-center py-8 text-muted-foreground">
+                {isLoadingEntries ? "Loading..." : "No entries found."}
+              </p>
+            ) : (
+              entries.map((entry) => (
+                <div key={`mob-${entry.id}`} className="border border-border rounded-xl p-4 bg-white shadow-sm flex justify-between items-center relative pr-12">
+                  <div className="space-y-1 w-full">
+                    <p className="font-bold text-primary text-base">
+                      {entry.daily_customers?.name ?? "—"}
+                    </p>
+                    <div className="flex gap-2 text-xs text-muted-foreground font-medium">
+                      <span>{formatDate(entry.date)}</span>
+                      <span>•</span>
+                      <span className="capitalize">{entry.shift}</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        {entry.daily_products?.name ?? "—"} ({entry.quantity} {entry.daily_products?.unit === "liter" ? (lang === "hi" ? "लीटर" : "liter") : (entry.daily_products?.unit || "")})
+                      </span>
+                      <span className="font-bold text-emerald-700 text-base">
+                        ₹{Number(entry.total_amount).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleEditClick(entry)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-primary hover:bg-primary/10 rounded-xl transition-all touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    title="Edit entry"
+                  >
+                    <PencilIcon className="w-5 h-5" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </>
       </Card>
     </div>
   );

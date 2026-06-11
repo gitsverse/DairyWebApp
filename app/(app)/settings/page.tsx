@@ -193,7 +193,7 @@ export default function SettingsPage() {
               {message}
             </p>
           )}
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={saving} className="touch-manipulation min-h-[44px] w-full sm:w-auto">
             {saving ? "Saving…" : "Save"}
           </Button>
         </form>

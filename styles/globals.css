@@ -175,3 +175,27 @@ button {
   animation: slide-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Safe area for iPhone notch/home bar */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Smooth scrolling */
+* { 
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+/* Prevent text size adjust on rotation */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Better scrolling on iOS */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; }

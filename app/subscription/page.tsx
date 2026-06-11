@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabaseClient";
 import AppShell from "@/components/layout/AppShell";
+import { loadRazorpayScript } from '@/lib/razorpay';
+import { QRCodeSVG } from 'qrcode.react';
 
 type SubStatus = {
   plan_name: string;
@@ -39,20 +41,7 @@ const rightFeatures = [
   "Priority support",
 ];
 
-function loadRazorpayScript(): Promise<boolean> {
-  return new Promise((resolve) => {
-    if (typeof window !== "undefined" && (window as any).Razorpay) {
-      resolve(true);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-}
+
 
 export default function SubscriptionPage() {
   const rawMonthly = process.env.NEXT_PUBLIC_PRICE_MONTHLY;
@@ -64,14 +53,18 @@ export default function SubscriptionPage() {
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("yearly");
   const [showModal, setShowModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<"razorpay" | "manual">("razorpay");
+  const [activeTab, setActiveTab] = useState<"razorpay" | "manual" | "qrcode">("razorpay");
   const [txnRef, setTxnRef] = useState("");
   const [upiId, setUpiId] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [purchasing, setPurchasing] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
+  const [razorpayFailed, setRazorpayFailed] = useState(false);
 
   useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_UPI_ID) {
+      console.warn("NEXT_PUBLIC_UPI_ID is not set in environment variables. QR Code generation will fail.");
+    }
     async function load() {
       const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) return router.push("/login");
@@ -112,82 +105,129 @@ export default function SubscriptionPage() {
   }
 
   async function handleRazorpayPayment() {
-    setPurchasing(true);
+    setPurchasing(true)
+    setToast(null)
+
     try {
-      // 1. Create subscription via backend API to get a subscription_id
-      const res = await fetch("/api/payments/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planName: selectedPlan }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to initiate subscription payment.");
+      // Step 1: Load Razorpay SDK
+      const sdkLoaded = await loadRazorpayScript()
+      if (!sdkLoaded) {
+        setRazorpayFailed(true)
+        setToast({ 
+          msg: 'Razorpay script blocked (CSP or Adblocker). Please disable shields and retry.', 
+          type: 'error' 
+        })
+        setPurchasing(false)
+        return
       }
+      setRazorpayFailed(false)
 
-      const subscriptionId = data.subscriptionId;
-
-      // 2. Load Razorpay checkout SDK
-      const scriptLoaded = await loadRazorpayScript();
-      if (!scriptLoaded) {
-        setToast({ msg: "Failed to load Razorpay payment SDK.", type: "error" });
-        setPurchasing(false);
-        return;
-      }
-
-      const { data: { user } } = await supabaseClient.auth.getUser();
+      // Step 2: Get logged in user
+      const { data: { user } } = await supabaseClient.auth.getUser()
       if (!user) {
         setPurchasing(false);
-        return;
+        return
       }
 
-      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_6X9N9Y3W2bH5Z7";
+      // Step 3: Create Razorpay order
+      const amount = selectedPlan === 'yearly' ? priceYearly : priceMonthly
+      const orderRes = await fetch('/api/razorpay/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, planName: selectedPlan })
+      })
+      const orderData = await orderRes.json()
 
+      if (!orderRes.ok || !orderData.orderId) {
+        setToast({ 
+          msg: orderData.error || 'Failed to create order', 
+          type: 'error' 
+        })
+        setPurchasing(false)
+        return
+      }
+
+      // Step 4: Open Razorpay Checkout
       const options = {
-        key: keyId,
-        subscription_id: subscriptionId,
-        name: "DairyPro",
-        description: `${selectedPlan === "monthly" ? "Monthly" : "Yearly"} Subscription Plan`,
-        handler: async function (response: any) {
-          // Payment/Subscription successful
-          const paymentId = response.razorpay_payment_id;
-          const { data: rpcData, error: rpcError } = await supabaseClient.rpc("purchase_plan", {
-            p_user_id: user.id,
-            p_plan_name: selectedPlan,
-            p_payment_ref: paymentId,
-            p_payment_mode: "razorpay",
-          });
-
-          if (rpcError) {
-            setToast({ msg: `Activation error: ${rpcError.message}`, type: "error" });
-          } else {
-            setToast({ msg: "Subscription activated via Razorpay! Redirecting...", type: "success" });
-            setShowModal(false);
-            setTimeout(() => {
-              router.refresh();
-              router.push("/dashboard");
-            }, 2000);
-          }
-          setPurchasing(false);
-        },
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: 'INR',
+        name: 'DairyWeb',
+        description: selectedPlan === 'yearly' 
+          ? `Yearly Plan - ₹${priceYearly.toLocaleString("en-IN")}` 
+          : `Monthly Plan - ₹${priceMonthly}`,
+        order_id: orderData.orderId,
         prefill: {
-          email: userEmail,
+          email: user.email || userEmail,
         },
-        theme: {
-          color: "#14b8a6", // Teal theme to match TradersPro UI!
-        },
-        modal: {
-          ondismiss: function () {
-            setPurchasing(false);
-          },
-        },
-      };
+        theme: { color: '#14b8a6' },
 
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-    } catch (e: any) {
-      setToast({ msg: e.message || "Failed to open Razorpay checkout", type: "error" });
-      setPurchasing(false);
+        handler: async function (response: any) {
+          // Step 5: Verify payment on server
+          const verifyRes = await fetch(
+            '/api/razorpay/verify-payment',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            }
+          )
+          const verifyData = await verifyRes.json()
+
+          if (verifyData.verified) {
+            // Step 6: Activate plan in Supabase
+            const { error } = await supabaseClient.rpc('purchase_plan', {
+              p_user_id: user.id,
+              p_plan_name: selectedPlan,
+              p_payment_ref: response.razorpay_payment_id,
+              p_payment_mode: 'online'
+            })
+
+            if (error) {
+              setToast({ msg: error.message, type: 'error' })
+            } else {
+              setToast({ 
+                msg: '✅ Plan activated! Redirecting...', 
+                type: 'success' 
+              })
+              setShowModal(false);
+              setTimeout(() => {
+                router.refresh()
+                router.push('/dashboard')
+              }, 2000)
+            }
+          } else {
+            setToast({ 
+              msg: 'Payment verification failed. Contact support.', 
+              type: 'error' 
+            })
+          }
+          setPurchasing(false)
+        },
+
+        modal: {
+          ondismiss: () => setPurchasing(false)
+        }
+      }
+
+      const rzp = new (window as any).Razorpay(options)
+      rzp.on("payment.failed", function (response: any) {
+        console.error("Payment Failed Response:", response.error);
+        setToast({ 
+          msg: response.error?.description || "Authentication failed. Please check your credentials.", 
+          type: 'error' 
+        });
+        setPurchasing(false);
+      });
+      rzp.open()
+
+    } catch (err: any) {
+      setToast({ msg: err.message, type: 'error' })
+      setPurchasing(false)
     }
   }
 
@@ -376,24 +416,35 @@ export default function SubscriptionPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab("razorpay")}
-                className={`flex-1 pb-3 text-sm font-extrabold transition-all border-b-2 uppercase tracking-wider ${
+                className={`flex-1 pb-3 text-xs md:text-sm font-extrabold transition-all border-b-2 uppercase tracking-wider ${
                   activeTab === "razorpay"
                     ? "border-teal-500 text-teal-600"
                     : "border-transparent text-slate-400 hover:text-slate-600"
                 }`}
               >
-                Razorpay (Online)
+                Razorpay
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("manual")}
-                className={`flex-1 pb-3 text-sm font-extrabold transition-all border-b-2 uppercase tracking-wider ${
+                className={`flex-1 pb-3 text-xs md:text-sm font-extrabold transition-all border-b-2 uppercase tracking-wider ${
                   activeTab === "manual"
                     ? "border-teal-500 text-teal-600"
                     : "border-transparent text-slate-400 hover:text-slate-600"
                 }`}
               >
                 Manual UPI
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("qrcode")}
+                className={`flex-1 pb-3 text-xs md:text-sm font-extrabold transition-all border-b-2 uppercase tracking-wider ${
+                  activeTab === "qrcode"
+                    ? "border-teal-500 text-teal-600"
+                    : "border-transparent text-slate-400 hover:text-slate-600"
+                }`}
+              >
+                QR Code
               </button>
             </div>
 
@@ -404,13 +455,20 @@ export default function SubscriptionPage() {
                     ⚡ Pay securely using your Credit/Debit Card, UPI, Netbanking, or Wallet via Razorpay. The plan will activate instantly upon successful payment.
                   </p>
                 </div>
+                {razorpayFailed && (
+                  <div className="p-3 bg-rose-50/50 border border-rose-200 rounded-xl mb-4">
+                    <p className="text-xs text-rose-600 font-bold">
+                      ⚠️ Razorpay failed to load. Please check your adblocker or try another payment method.
+                    </p>
+                  </div>
+                )}
                 <button
                   type="button"
                   onClick={handleRazorpayPayment}
                   disabled={purchasing}
                   className="w-full bg-teal-500 hover:bg-teal-400 text-white font-black py-4 rounded-2xl tracking-widest transition-all duration-300 uppercase text-sm shadow-md"
                 >
-                  {purchasing ? "Processing Payment..." : `Pay ₹${selectedPlan === "monthly" ? priceMonthly : priceYearly.toLocaleString("en-IN")} via Razorpay`}
+                  {purchasing ? "Processing..." : razorpayFailed ? "Retry Payment" : `Pay ₹${selectedPlan === "monthly" ? priceMonthly : priceYearly.toLocaleString("en-IN")} via Razorpay`}
                 </button>
                 <button
                   type="button"
@@ -422,6 +480,24 @@ export default function SubscriptionPage() {
               </div>
             ) : (
               <div className="space-y-4">
+                {activeTab === "qrcode" && (
+                  <div className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-4">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Scan to Pay via UPI</p>
+                    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
+                      {process.env.NEXT_PUBLIC_UPI_ID ? (
+                        <QRCodeSVG
+                          value={`upi://pay?pa=${process.env.NEXT_PUBLIC_UPI_ID}&pn=DairyWeb&am=${selectedPlan === 'monthly' ? priceMonthly : priceYearly}&cu=INR`}
+                          size={192}
+                          level="H"
+                        />
+                      ) : (
+                        <div className="w-48 h-48 rounded-xl bg-slate-200 border-2 border-dashed border-slate-300 flex items-center justify-center">
+                          <p className="text-xs text-rose-400 font-bold text-center px-4">QR unavailable.<br/>Missing NEXT_PUBLIC_UPI_ID</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <div>
                   <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Your UPI ID (optional)</label>
                   <input

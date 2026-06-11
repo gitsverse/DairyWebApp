@@ -275,61 +275,115 @@ export default function RetailPage() {
       </div>
 
       <Card title={lang === "hi" ? "आज का खुदरा बिक्री इतिहास" : "Today's Retail Sales History"}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground uppercase bg-secondary/80">
-              <tr>
-                <th className="px-4 py-3">Time</th>
-                <th className="px-4 py-3">Product</th>
-                <th className="px-4 py-3 text-right">Quantity</th>
-                <th className="px-4 py-3 text-right">Rate</th>
-                <th className="px-4 py-3 text-right">Total Amount</th>
-                <th className="px-4 py-3">Payment Mode</th>
-                <th className="px-4 py-3 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {salesList.length === 0 ? (
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-muted-foreground uppercase bg-secondary/80">
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-muted-foreground">
-                    {lang === "hi" ? "कोई एंट्री नहीं मिली।" : "No entries found."}
-                  </td>
+                  <th className="px-4 py-3">Time</th>
+                  <th className="px-4 py-3">Product</th>
+                  <th className="px-4 py-3 text-right">Quantity</th>
+                  <th className="px-4 py-3 text-right">Rate</th>
+                  <th className="px-4 py-3 text-right">Total Amount</th>
+                  <th className="px-4 py-3">Payment Mode</th>
+                  <th className="px-4 py-3 text-center">Actions</th>
                 </tr>
-              ) : (
-                salesList.map((sale) => {
-                  const rateVal = sale.quantity > 0 ? (sale.total_amount / sale.quantity) : 0;
-                  const timeStr = sale.created_at
-                    ? new Date(sale.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                    : "—";
+              </thead>
+              <tbody>
+                {salesList.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-8 text-muted-foreground">
+                      {lang === "hi" ? "कोई एंट्री नहीं मिली।" : "No entries found."}
+                    </td>
+                  </tr>
+                ) : (
+                  salesList.map((sale) => {
+                    const rateVal = sale.quantity > 0 ? (sale.total_amount / sale.quantity) : 0;
+                    const timeStr = sale.created_at
+                      ? new Date(sale.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                      : "—";
 
-                  return (
-                    <tr key={sale.id} className="border-b border-border hover:bg-secondary/40 transition-colors">
-                      <td className="px-4 py-2 font-medium">{timeStr}</td>
-                      <td className="px-4 py-2 font-semibold capitalize">
-                        {products.find(p => p.id === sale.product_id)?.name ?? "—"}
-                      </td>
-                      <td className="px-4 py-2 text-right">{sale.quantity}</td>
-                      <td className="px-4 py-2 text-right">₹{rateVal.toFixed(2)}</td>
-                      <td className="px-4 py-2 text-right font-bold text-primary">₹{Number(sale.total_amount).toFixed(2)}</td>
-                      <td className="px-4 py-2 capitalize font-semibold">{sale.payment_mode === "online" ? "Online / UPI" : sale.payment_mode}</td>
-                      <td className="px-4 py-2 text-center">
-                        <button
-                          onClick={() => handleDelete(sale.id)}
-                          className="text-destructive hover:text-destructive/80 p-1 hover:bg-destructive/10 rounded-lg transition-colors inline-flex items-center"
-                          title="Delete entry"
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                    return (
+                      <tr key={sale.id} className="border-b border-border hover:bg-secondary/40 transition-colors">
+                        <td className="px-4 py-2 font-medium">{timeStr}</td>
+                        <td className="px-4 py-2 font-semibold capitalize">
+                          {products.find(p => p.id === sale.product_id)?.name ?? "—"}
+                        </td>
+                        <td className="px-4 py-2 text-right">{sale.quantity}</td>
+                        <td className="px-4 py-2 text-right">₹{rateVal.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-right font-bold text-primary">₹{Number(sale.total_amount).toFixed(2)}</td>
+                        <td className="px-4 py-2 capitalize font-semibold">{sale.payment_mode === "online" ? "Online / UPI" : sale.payment_mode}</td>
+                        <td className="px-4 py-2 text-center">
+                          <button
+                            onClick={() => handleDelete(sale.id)}
+                            className="text-destructive hover:text-destructive/80 p-1 hover:bg-destructive/10 rounded-lg transition-colors inline-flex items-center touch-manipulation min-h-[44px] min-w-[44px] justify-center"
+                            title="Delete entry"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card List */}
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {salesList.length === 0 ? (
+              <p className="text-center py-8 text-muted-foreground">
+                {lang === "hi" ? "कोई एंट्री नहीं मिली।" : "No entries found."}
+              </p>
+            ) : (
+              salesList.map((sale) => {
+                const rateVal = sale.quantity > 0 ? (sale.total_amount / sale.quantity) : 0;
+                const timeStr = sale.created_at
+                  ? new Date(sale.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                  : "—";
+
+                return (
+                  <div key={`mob-${sale.id}`} className="border border-border rounded-xl p-4 bg-white shadow-sm flex justify-between items-center relative pr-12">
+                    <div className="space-y-1 w-full">
+                      <div className="flex justify-between items-center">
+                        <p className="font-bold text-primary text-base capitalize">
+                          {products.find(p => p.id === sale.product_id)?.name ?? "—"}
+                        </p>
+                        <span className="text-xs font-semibold px-2 py-1 bg-secondary/50 rounded capitalize">
+                          {sale.payment_mode === "online" ? "Online / UPI" : sale.payment_mode}
+                        </span>
+                      </div>
+                      <div className="flex gap-2 text-xs text-muted-foreground font-medium">
+                        <span>{timeStr}</span>
+                      </div>
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-sm font-medium text-slate-600">
+                          Qty: {sale.quantity} @ ₹{rateVal.toFixed(2)}
+                        </span>
+                        <span className="font-bold text-primary text-base">
+                          ₹{Number(sale.total_amount).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleDelete(sale.id)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-destructive hover:bg-destructive/10 rounded-xl transition-all touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+                      title="Delete entry"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </>
       </Card>
     </div>
   );

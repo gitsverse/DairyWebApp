@@ -100,7 +100,7 @@ const dict: Record<Lang, Record<string, string>> = {
 		"public.featureBillingTitle": "Billing & sharing",
 		"public.featureBillingBody":
 			"Beautiful statements, PDF export, and time-limited share links from secure storage.",
-		"public.builtByTitle": "Built by Shaibya Solutions",
+		"public.builtByTitle": "Built by Atif Azmi",
 		"public.builtByBodyA":
 			"We craft practical software for local businesses — starting with dairy operations where trust, speed, and clear numbers matter every morning.",
 		"public.builtByBodyB":
@@ -194,7 +194,7 @@ const dict: Record<Lang, Record<string, string>> = {
 		"public.featureBillingTitle": "बिलिंग और शेयर",
 		"public.featureBillingBody":
 			"सुंदर स्टेटमेंट, PDF और सुरक्षित स्टोरेज से शेयर लिंक।",
-		"public.builtByTitle": "Shaibya Solutions द्वारा बनाया गया",
+		"public.builtByTitle": "Atif Azmi द्वारा बनाया गया",
 		"public.builtByBodyA":
 			"हम स्थानीय बिज़नेस के लिए तेज़ और भरोसेमंद सॉफ्टवेयर बनाते हैं — खासकर डेयरी के लिए।",
 		"public.builtByBodyB":

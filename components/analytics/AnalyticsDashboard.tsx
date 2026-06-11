@@ -34,7 +34,7 @@ const AnalyticsDashboard: React.FC<Props> = ({ data }) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
         <StatCard title="Total sales" value={`₹${data.totalSales.toFixed(2)}`} />
         <StatCard
           title="Milk (liters)"
@@ -51,7 +51,7 @@ const AnalyticsDashboard: React.FC<Props> = ({ data }) => {
       </div>
 
       {productEntries.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
           {productEntries.map(([name, amount]) => (
             <Card key={name} title={`Sales — ${name.charAt(0).toUpperCase() + name.slice(1)}`}>
               <p className="text-xl font-semibold text-primary">
@@ -62,7 +62,8 @@ const AnalyticsDashboard: React.FC<Props> = ({ data }) => {
         </div>
       )}
 
-      {daily.length > 0 && (() => {
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+        {daily.length > 0 && (() => {
         const CHART_W = 700;
         const CHART_H = 220;
         const PAD_LEFT = 72;
@@ -104,8 +105,8 @@ const AnalyticsDashboard: React.FC<Props> = ({ data }) => {
             <div className="w-full overflow-x-auto">
               <svg
                 viewBox={`0 0 ${CHART_W} ${CHART_H}`}
-                className="w-full"
-                style={{ maxHeight: 220, minWidth: 280 }}
+                className="w-full h-[200px] lg:h-[300px]"
+                style={{ minWidth: 280 }}
                 aria-label="Daily sales trend"
               >
                 <defs>
@@ -219,6 +220,7 @@ const AnalyticsDashboard: React.FC<Props> = ({ data }) => {
           </ul>
         </Card>
       )}
+    </div>
     </div>
   );
 };
