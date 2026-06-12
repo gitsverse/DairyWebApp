@@ -29,7 +29,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <Sidebar mobileOpen={mobileNavOpen} onNavigate={closeNav} />
       <div className="flex min-w-0 min-h-screen flex-1 flex-col">
         <AppHeader onOpenMobileNav={openNav} />
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-5 md:p-8 pb-20 md:pb-8">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-5 md:p-8 pb-32 md:pb-8">
           {children}
         </main>
         <footer className="px-4 md:px-8 py-4 border-t border-border bg-white/50 backdrop-blur-sm text-center lg:block hidden">
