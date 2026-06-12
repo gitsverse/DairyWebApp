@@ -11,8 +11,8 @@ export default function BottomNav() {
     { href: '/dashboard',     icon: '🏠', label: t('nav.dashboard') },
     { href: '/customers',     icon: '👥', label: t('nav.customers') },
     { href: '/entries',       icon: '📝', label: t('nav.entries') },
+    { href: '/analytics',     icon: '📊', label: t('nav.analytics') },
     { href: '/billing',       icon: '💰', label: t('nav.billing') },
-    { href: '/settings',      icon: '⚙️', label: t('nav.settings') },
   ]
 
   return (
@@ -31,7 +31,7 @@ export default function BottomNav() {
                     touch-manipulation min-w-[60px]
                     transition-all duration-300
                     ${isActive 
-                      ? 'bg-teal-50 text-teal-600 scale-105' 
+                      ? 'bg-primary/10 text-primary scale-105' 
                       : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                     }`}
                 >
@@ -39,7 +39,7 @@ export default function BottomNav() {
                     {item.icon}
                   </span>
                   <span className={`text-[10px] font-bold mt-1 truncate max-w-[60px] text-center
-                    ${isActive ? 'text-teal-600' : 'text-gray-400'}`}>
+                    ${isActive ? 'text-primary' : 'text-gray-400'}`}>
                     {item.label}
                   </span>
                 </Link>

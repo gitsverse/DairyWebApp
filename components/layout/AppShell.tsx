@@ -15,8 +15,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen bg-page text-foreground relative selection:bg-primary/20 selection:text-primary">
       {/* Subtle Light Mesh Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1] bg-page print:hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-100/40 rounded-full blur-3xl mix-blend-multiply opacity-50 transform translate-x-1/3 -translate-y-1/3" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-3xl mix-blend-multiply opacity-50 transform -translate-x-1/3 translate-y-1/3" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-100/30 rounded-full blur-3xl mix-blend-multiply opacity-50 transform translate-x-1/3 -translate-y-1/3" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-green-50/30 rounded-full blur-3xl mix-blend-multiply opacity-50 transform -translate-x-1/3 translate-y-1/3" />
       </div>
       {mobileNavOpen ? (
         <button

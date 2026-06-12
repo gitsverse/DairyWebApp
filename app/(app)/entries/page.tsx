@@ -71,7 +71,7 @@ const EntriesPage = () => {
   const [isSubmittingBulk, setIsSubmittingBulk] = useState(false);
 
   // Filters state
-  const [dateFrom, setDateFrom] = useState<string>(startOfMonthISO());
+  const [dateFrom, setDateFrom] = useState<string>(isoDate(new Date()));
   const [dateTo, setDateTo] = useState<string>(isoDate(new Date()));
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");

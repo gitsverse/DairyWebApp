@@ -152,6 +152,12 @@ const CustomersPage = () => {
 
   useEffect(() => {
     fetchCustomerSummaries();
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("add") === "true") {
+        setIsModalOpen(true);
+      }
+    }
   }, [fetchCustomerSummaries]);
 
   const openModalForNew = () => {

@@ -11,18 +11,18 @@ const config: Config = {
         sans: ["var(--font-outfit)", "system-ui", "sans-serif"],
       },
       colors: {
-        page: "#f8fafc", // slate-50
+        page: "#fafaf7", // cream/off-white
         foreground: "#0f172a", // slate-900
         card: "#ffffff",
         cream: {
-          50: "#f8fafc",
-          100: "#f1f5f9",
-          200: "#e2e8f0",
+          50: "#fafaf7",
+          100: "#f4f4f0",
+          200: "#e5e5df",
         },
         primary: {
-          DEFAULT: "#059669", // Emerald 600
+          DEFAULT: "#2d7a3a", // natural green
           foreground: "#ffffff",
-          muted: "#047857", // Emerald 700
+          muted: "#215d2a", // darker green
         },
         secondary: {
           DEFAULT: "#f1f5f9", // Slate 100

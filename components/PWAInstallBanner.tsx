@@ -43,7 +43,7 @@ export default function PWAInstallBanner() {
                     bg-white border-t sm:border sm:rounded-2xl 
                     border-gray-200 shadow-2xl z-50 p-4
                     flex items-center gap-3">
-      <div className="w-12 h-12 bg-teal-500 rounded-xl 
+      <div className="w-12 h-12 bg-primary rounded-xl 
                       flex items-center justify-center 
                       text-white text-xl shrink-0">
         🥛
@@ -66,8 +66,8 @@ export default function PWAInstallBanner() {
         </button>
         <button
           onClick={handleInstall}
-          className="bg-teal-500 text-white text-xs font-bold 
-                     px-3 py-2 rounded-xl hover:bg-teal-400 
+          className="bg-primary text-white text-xs font-bold 
+                     px-3 py-2 rounded-xl hover:bg-primary/90 
                      transition whitespace-nowrap"
         >
           Install

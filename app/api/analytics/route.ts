@@ -52,6 +52,7 @@ export async function GET(req: NextRequest) {
     let totalMilk = 0;
     let totalPaid = 0;
     const dailySales: Record<string, number> = {};
+    const dailyMilk: Record<string, number> = {};
     const productSales: Record<string, number> = {};
     const customerSales: Record<string, number> = {};
 
@@ -77,6 +78,7 @@ export async function GET(req: NextRequest) {
       productSales[prodName] = (productSales[prodName] || 0) + amount;
       if (prodName.toLowerCase() === "milk") {
         totalMilk += qty;
+        dailyMilk[dateKey] = (dailyMilk[dateKey] || 0) + qty;
       }
     }
 
@@ -102,6 +104,7 @@ export async function GET(req: NextRequest) {
 
       if (prodName.toLowerCase() === "milk") {
         totalMilk += qty;
+        dailyMilk[dateKey] = (dailyMilk[dateKey] || 0) + qty;
       }
     }
 
@@ -118,6 +121,7 @@ export async function GET(req: NextRequest) {
       totalPaid,
       outstandingBalance,
       dailySales,
+      dailyMilk,
       productSales,
       topCustomers,
     });

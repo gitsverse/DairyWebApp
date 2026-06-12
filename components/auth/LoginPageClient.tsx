@@ -19,9 +19,12 @@ export default function LoginPageClient() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-md rounded-2xl bg-white/90 backdrop-blur shadow-lift border border-border p-8 animate-fadeUp">
+      <div className="w-full max-w-md rounded-3xl bg-white/90 backdrop-blur shadow-lift border border-border p-8 animate-fadeUp">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-primary">Dairy Management Pro</h1>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary text-3xl mb-3 animate-float">
+            🐄
+          </div>
+          <h1 className="text-2xl font-bold text-primary">DairyPro</h1>
           <p className="text-sm text-muted-foreground mt-1">{t("auth.loginHelp")}</p>
         </div>
 

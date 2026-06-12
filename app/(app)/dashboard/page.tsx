@@ -1,205 +1,263 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
-import DateInput from "@/components/ui/DateInput";
-import AnalyticsDashboard, {
-  type AnalyticsDashboardData,
-} from "@/components/analytics/AnalyticsDashboard";
-import { withTimeout } from "@/lib/withTimeout";
+import Card from "@/components/ui/Card";
 import { useI18n } from "@/components/i18n/LanguageProvider";
+import { formatDate } from "@/lib/dateUtils";
 
-const FETCH_MS = 18_000;
+interface DashboardData {
+  totalCustomers: number;
+  todaysMilk: number;
+  totalCollections: number;
+  outstandingBalance: number;
+  recentEntries: {
+    id: string;
+    date: string;
+    customerName: string;
+    productName: string;
+    quantity: number;
+    rate: number;
+    amount: number;
+    shift: string;
+  }[];
+}
 
-const emptyAnalytics = (): AnalyticsDashboardData => ({
-  totalSales: 0,
-  totalMilk: 0,
-  totalPaid: 0,
+const emptyDashboardData = (): DashboardData => ({
+  totalCustomers: 0,
+  todaysMilk: 0,
+  totalCollections: 0,
   outstandingBalance: 0,
-  productSales: {},
-  dailySales: {},
-  topCustomers: [],
+  recentEntries: [],
 });
 
-const toLocalDate = (d: Date) => {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-};
-
-const getDateRange = (filter: string) => {
-  const today = new Date();
-  let startDate = new Date();
-  let endDate = new Date();
-
-  switch (filter) {
-    case "today":
-      break;
-    case "week": {
-      const d = today.getDay();
-      const mondayOffset = d === 0 ? -6 : 1 - d;
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() + mondayOffset);
-      endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 6);
-      break;
-    }
-    case "month":
-      startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-      endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-      break;
-  }
-  return {
-    start: toLocalDate(startDate),
-    end: toLocalDate(endDate),
-  };
-};
-
-const DashboardPage = () => {
+export default function DashboardPage() {
   const { t, lang } = useI18n();
-  const [data, setData] = useState<AnalyticsDashboardData>(emptyAnalytics);
-  const [filter, setFilter] = useState("today");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [data, setData] = useState<DashboardData>(emptyDashboardData());
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
-  const fetchAnalytics = useCallback(async (currentFilter: string, customStart?: string, customEnd?: string) => {
-    setError(null);
+  const fetchDashboard = useCallback(async () => {
     setLoading(true);
-    const range =
-      currentFilter === "custom" && customStart && customEnd
-        ? { start: customStart, end: customEnd }
-        : getDateRange(currentFilter);
+    setError(null);
     try {
-      const res = await withTimeout(
-        fetch(
-          `/api/analytics?start_date=${encodeURIComponent(range.start)}&end_date=${encodeURIComponent(range.end)}`,
-          { credentials: "include", cache: "no-store" }
-        ),
-        FETCH_MS
-      );
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const res = await fetch(`/api/dashboard?today=${todayStr}`, {
+        credentials: "include",
+        cache: "no-store",
+      });
       if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        setError((j as { error?: string }).error ?? "Failed to load analytics");
-        setData(emptyAnalytics());
-        return;
+        throw new Error("Failed to load dashboard data");
       }
       const json = await res.json();
-      setData({
-        totalSales: Number(json.totalSales),
-        totalMilk: Number(json.totalMilk),
-        totalPaid: Number(json.totalPaid),
-        outstandingBalance: Number(json.outstandingBalance),
-        productSales: json.productSales,
-        dailySales: json.dailySales,
-        topCustomers: json.topCustomers,
-      });
+      setData(json);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load analytics");
-      setData(emptyAnalytics());
+      setError(e instanceof Error ? e.message : "Failed to load dashboard");
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (filter === "custom") {
-      if (startDate && endDate) {
-        fetchAnalytics(filter, startDate, endDate);
-      }
-      return;
-    }
-    fetchAnalytics(filter);
-  }, [filter, startDate, endDate, fetchAnalytics]);
+    fetchDashboard();
+  }, [fetchDashboard]);
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">{t("dashboard.title")}</h1>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            type="button"
-            variant={filter === "today" ? "primary" : "outline"}
-            onClick={() => setFilter("today")}
-          >
-            {lang === "hi" ? "आज" : "Today"}
-          </Button>
-          <Button
-            type="button"
-            variant={filter === "week" ? "primary" : "outline"}
-            onClick={() => setFilter("week")}
-          >
-            {lang === "hi" ? "यह सप्ताह" : "This week"}
-          </Button>
-          <Button
-            type="button"
-            variant={filter === "month" ? "primary" : "outline"}
-            onClick={() => setFilter("month")}
-          >
-            {lang === "hi" ? "यह महीना" : "This month"}
-          </Button>
-          <Button
-            type="button"
-            variant={filter === "custom" ? "primary" : "outline"}
-            onClick={() => setFilter("custom")}
-          >
-            {lang === "hi" ? "कस्टम" : "Custom"}
-          </Button>
-        </div>
-      </div>
-      {filter === "custom" && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-2xl">
-          <DateInput
-            id="analytics-start"
-            label={lang === "hi" ? "शुरू तारीख" : "Start Date"}
-            value={startDate}
-            onChange={setStartDate}
-            required
-          />
-          <DateInput
-            id="analytics-end"
-            label={lang === "hi" ? "अंतिम तारीख" : "End Date"}
-            value={endDate}
-            onChange={setEndDate}
-            required
-          />
-          <div className="flex items-end">
-            <Button
-              type="button"
-              onClick={() => fetchAnalytics("custom", startDate, endDate)}
-              disabled={!startDate || !endDate}
-            >
-              {lang === "hi" ? "लागू करें" : "Apply"}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {loading ? (
-        <p className="text-sm text-muted-foreground" aria-live="polite">
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        <p className="text-sm font-semibold text-slate-500 animate-pulse">
           {t("common.loading")}
         </p>
-      ) : null}
-      {error ? (
-        <p className="text-destructive">{error}</p>
-      ) : (
-        <div className="space-y-4">
-          {data.totalSales === 0 &&
-            data.totalPaid === 0 &&
-            Object.keys(data.dailySales ?? {}).length === 0 && (
-              <p className="text-sm text-muted-foreground rounded-lg border border-border bg-secondary/30 px-4 py-3">
-                No sales or payments in this period yet. Add daily entries or payments to see
-                figures here.
-              </p>
-            )}
-          <AnalyticsDashboard data={data} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center max-w-xl mx-auto space-y-4 my-8">
+        <p className="text-red-700 font-bold text-lg">Error loading dashboard</p>
+        <p className="text-red-600 text-sm">{error}</p>
+        <Button onClick={fetchDashboard} variant="outline">
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8 animate-fadeUp pb-8">
+      {/* Welcome Message Header */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-black text-foreground tracking-tight sm:text-4xl">
+            {lang === "hi" ? "नमस्ते! डेयरी प्रो में आपका स्वागत है" : "Welcome to DairyPro"}
+          </h1>
+          <p className="text-sm text-slate-500 font-medium mt-1">
+            {lang === "hi" ? "आज की स्थिति और त्वरित गतिविधियां" : "Here's today's overview and quick actions."}
+          </p>
         </div>
-      )}
+        <Button onClick={fetchDashboard} variant="outline" className="self-start sm:self-center">
+          🔄 {lang === "hi" ? "ताज़ा करें" : "Refresh"}
+        </Button>
+      </div>
+
+      {/* 4 Summary Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* Total Customers */}
+        <div className="bg-white rounded-[24px] border border-slate-200/60 p-5 shadow-card hover:shadow-lift transition-all duration-300 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500" />
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+              {lang === "hi" ? "कुल ग्राहक" : "Total Customers"}
+            </span>
+            <span className="text-2xl" role="img" aria-label="customers">👥</span>
+          </div>
+          <p className="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-primary transition-colors">
+            {data.totalCustomers}
+          </p>
+          <div className="mt-2 text-[10px] text-slate-400 font-semibold">Registered customers</div>
+        </div>
+
+        {/* Today's Milk */}
+        <div className="bg-white rounded-[24px] border border-slate-200/60 p-5 shadow-card hover:shadow-lift transition-all duration-300 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500" />
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+              {lang === "hi" ? "आज का दूध" : "Today's Milk"}
+            </span>
+            <span className="text-2xl" role="img" aria-label="milk">🥛</span>
+          </div>
+          <p className="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-primary transition-colors">
+            {data.todaysMilk.toFixed(1)} <span className="text-xs sm:text-sm font-bold text-slate-400">Liters</span>
+          </p>
+          <div className="mt-2 text-[10px] text-slate-400 font-semibold">Recorded entries for today</div>
+        </div>
+
+        {/* Total Collections */}
+        <div className="bg-white rounded-[24px] border border-slate-200/60 p-5 shadow-card hover:shadow-lift transition-all duration-300 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500" />
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+              {lang === "hi" ? "कुल कलेक्शन" : "Total Collections"}
+            </span>
+            <span className="text-2xl" role="img" aria-label="collections">₹</span>
+          </div>
+          <p className="text-2xl sm:text-3xl font-black text-emerald-800">
+            ₹{data.totalCollections.toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+          </p>
+          <div className="mt-2 text-[10px] text-slate-400 font-semibold">Total payments collected</div>
+        </div>
+
+        {/* Outstanding Balance */}
+        <div className="bg-white rounded-[24px] border border-slate-200/60 p-5 shadow-card hover:shadow-lift transition-all duration-300 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-rose-50 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500" />
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+              {lang === "hi" ? "बकाया राशि" : "Outstanding Balance"}
+            </span>
+            <span className="text-2xl" role="img" aria-label="outstanding">💰</span>
+          </div>
+          <p className={`text-2xl sm:text-3xl font-black ${data.outstandingBalance > 0 ? "text-red-600" : "text-emerald-700"}`}>
+            ₹{Math.abs(data.outstandingBalance).toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+          </p>
+          <div className="mt-2 text-[10px] text-slate-400 font-semibold">
+            {data.outstandingBalance >= 0 ? "Owed by customers" : "Advance holding"}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions Panel */}
+      <Card title={lang === "hi" ? "त्वरित गतिविधियां" : "Quick Actions"}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 py-2">
+          <Link href="/entries">
+            <button className="flex items-center justify-center gap-3 w-full bg-gradient-to-r from-primary to-green-600 text-white font-bold py-3.5 px-6 rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-md">
+              <span className="text-xl">📝</span>
+              <span>{lang === "hi" ? "एंट्री जोड़ें" : "Add Entry"}</span>
+            </button>
+          </Link>
+          <Link href="/customers?add=true">
+            <button className="flex items-center justify-center gap-3 w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3.5 px-6 rounded-2xl active:scale-95 transition-all shadow-sm">
+              <span className="text-xl">👥</span>
+              <span>{lang === "hi" ? "नया ग्राहक" : "Add Customer"}</span>
+            </button>
+          </Link>
+          <Link href="/billing">
+            <button className="flex items-center justify-center gap-3 w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3.5 px-6 rounded-2xl active:scale-95 transition-all shadow-sm">
+              <span className="text-xl">🧾</span>
+              <span>{lang === "hi" ? "बिल बनाएं" : "Generate Bill"}</span>
+            </button>
+          </Link>
+        </div>
+      </Card>
+
+      {/* Recent Entries */}
+      <Card title={lang === "hi" ? "हाल की दूध प्रविष्टियां" : "Recent Milk Entries"}>
+        {data.recentEntries.length === 0 ? (
+          <div className="text-center py-8 text-slate-400 font-semibold">
+            No entries found. Go ahead and add some entries to get started.
+          </div>
+        ) : (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-muted-foreground uppercase bg-secondary/80">
+                  <tr>
+                    <th className="px-4 py-3">Date</th>
+                    <th className="px-4 py-3">Customer</th>
+                    <th className="px-4 py-3">Shift</th>
+                    <th className="px-4 py-3 text-right">Quantity (Liters)</th>
+                    <th className="px-4 py-3 text-right">Rate</th>
+                    <th className="px-4 py-3 text-right">Total Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.recentEntries.map((e) => (
+                    <tr key={e.id} className="border-b border-border hover:bg-secondary/40 transition-colors">
+                      <td className="px-4 py-3.5 font-medium">{formatDate(e.date)}</td>
+                      <td className="px-4 py-3.5 font-bold text-primary">{e.customerName}</td>
+                      <td className="px-4 py-3.5 capitalize text-slate-600">{e.shift}</td>
+                      <td className="px-4 py-3.5 text-right font-medium">{e.quantity.toFixed(1)} L</td>
+                      <td className="px-4 py-3.5 text-right text-slate-600">₹{e.rate.toFixed(2)}</td>
+                      <td className="px-4 py-3.5 text-right font-bold text-slate-900">₹{e.amount.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card List View */}
+            <div className="grid grid-cols-1 gap-3 md:hidden">
+              {data.recentEntries.map((e) => (
+                <div key={`mob-${e.id}`} className="border border-border rounded-2xl p-4 bg-slate-50/50 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-bold text-primary">{e.customerName}</p>
+                      <p className="text-xs text-muted-foreground font-semibold mt-0.5">
+                        {formatDate(e.date)} • <span className="capitalize">{e.shift}</span>
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-extrabold text-[9px]">Total</p>
+                      <p className="font-bold text-slate-950">₹{e.amount.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-xs border-t border-slate-100 pt-2 font-medium">
+                    <p className="text-slate-500">
+                      Quantity: <span className="text-slate-950 font-bold">{e.quantity.toFixed(1)} L</span>
+                    </p>
+                    <p className="text-slate-500">
+                      Rate: <span className="text-slate-950 font-bold">₹{e.rate.toFixed(2)}</span>
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </Card>
     </div>
   );
-};
-
-export default DashboardPage;
+}

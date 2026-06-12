@@ -13,6 +13,7 @@ import {
   ArrowRightOnRectangleIcon,
   ShoppingCartIcon,
   WalletIcon,
+  ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 import Button from "@/components/ui/Button";
 import { useI18n } from "@/components/i18n/LanguageProvider";
@@ -21,7 +22,8 @@ import { useSubscription } from "@/lib/useSubscription";
 const customerNavigation = [
   { key: "nav.dashboard", href: "/dashboard", icon: HomeIcon },
   { key: "nav.customers", href: "/customers", icon: UserGroupIcon },
-  { key: "nav.entries", href: "/entries", icon: DocumentChartBarIcon },
+  { key: "nav.entries", href: "/entries", icon: ClipboardDocumentListIcon },
+  { key: "nav.analytics", href: "/analytics", icon: DocumentChartBarIcon },
   { key: "nav.advances", href: "/advances", icon: WalletIcon },
   { key: "nav.billing", href: "/billing", icon: BanknotesIcon },
 ];

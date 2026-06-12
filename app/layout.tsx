@@ -4,6 +4,7 @@ import "../styles/globals.css";
 import ClientI18nProvider from "@/components/i18n/ClientI18nProvider";
 import { ToastProvider } from "@/components/ui/toast";
 import InstallPrompt from "@/components/InstallPrompt";
+import RefreshNotificationPopup from "@/components/RefreshNotificationPopup";
 
 const outfit = Outfit({ 
   subsets: ["latin", "latin-ext"], 
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ClientI18nProvider>
           <ToastProvider>
             <InstallPrompt />
+            <RefreshNotificationPopup />
             {children}
           </ToastProvider>
         </ClientI18nProvider>
