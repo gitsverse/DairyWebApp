@@ -7,13 +7,6 @@ export default function InstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch((err) => {
-        console.error('Service Worker registration failed:', err);
-      });
-    }
-
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       return;
