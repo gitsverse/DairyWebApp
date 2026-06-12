@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const razorpay = new Razorpay({ key_id, key_secret })
 
     const order = await razorpay.orders.create({
-      amount: amount * 100, // paise
+      amount: Math.round(amount * 100), // convert to paise safely as integer
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       notes: { plan: planName }
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ orderId: order.id, amount: order.amount })
 
   } catch (error: any) {
+    console.error("Razorpay order creation error:", error);
     return NextResponse.json(
       { error: error.description || error.message || 'Order creation failed' },
       { status: 500 }

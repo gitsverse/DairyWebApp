@@ -1,6 +1,6 @@
 {
-  "name": "DairyWeb - Dairy Management",
-  "short_name": "DairyWeb",
+  "name": "Dairy App",
+  "short_name": "Dairy App",
   "description": "Complete dairy business management app",
   "start_url": "/dashboard",
   "display": "standalone",

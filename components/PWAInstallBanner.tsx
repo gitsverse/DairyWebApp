@@ -50,7 +50,7 @@ export default function PWAInstallBanner() {
       </div>
       <div className="flex-1 min-w-0">
         <p className="font-bold text-gray-800 text-sm">
-          Install DairyWeb App
+          Install Dairy App
         </p>
         <p className="text-xs text-gray-500 truncate">
           Add to home screen for quick access
@@ -62,7 +62,7 @@ export default function PWAInstallBanner() {
           className="text-gray-400 text-xs px-2 py-1 
                      rounded-lg hover:bg-gray-100"
         >
-          Later
+          Dismiss
         </button>
         <button
           onClick={handleInstall}
