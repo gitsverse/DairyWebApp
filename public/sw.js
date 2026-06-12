@@ -32,11 +32,20 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   
+  // Only intercept static assets in the public folder to avoid breaking dynamic routes/APIs
+  const url = new URL(event.request.url);
+  const isStaticAsset = url.pathname.startsWith('/icons/') || 
+                        url.pathname.startsWith('/fonts/') || 
+                        url.pathname === '/manifest.json' ||
+                        url.pathname === '/favicon.ico';
+                        
+  if (!isStaticAsset) {
+    return; // Let browser handle dynamic content natively
+  }
+  
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request).catch(() => {
-        // Fallback or do nothing
-      });
+      return response || fetch(event.request);
     })
   );
 });
