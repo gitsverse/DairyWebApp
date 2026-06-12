@@ -59,7 +59,7 @@ export default function InstallPrompt() {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 sm:bottom-auto sm:top-4 sm:left-auto sm:right-4 sm:w-80 bg-white border-t sm:border sm:rounded-2xl border-gray-200 shadow-2xl z-50 p-4 flex flex-col gap-3 pb-safe">
+    <div className="fixed top-4 left-4 right-4 sm:w-80 sm:left-auto sm:right-4 bg-white border border-gray-200 rounded-2xl shadow-2xl z-[100] p-4 flex flex-col gap-3">
       <div className="flex items-center gap-3">
         <div className="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center text-white text-xl shrink-0">
           🥛
