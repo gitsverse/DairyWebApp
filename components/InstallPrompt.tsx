@@ -5,7 +5,6 @@ export default function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [showManualGuide, setShowManualGuide] = useState(false);
 
   useEffect(() => {
     // Register Service Worker client-side
@@ -20,11 +19,6 @@ export default function InstallPrompt() {
       return;
     }
 
-    // Delay showing the banner for 6 seconds unconditionally
-    const timer = setTimeout(() => {
-      setShowBanner(true);
-    }, 6000);
-
     // Detect iOS Safari
     const ua = window.navigator.userAgent;
     const webkit = !/CriOS/i.test(ua) && /WebKit/i.test(ua);
@@ -33,26 +27,33 @@ export default function InstallPrompt() {
 
     if (isSafari) {
       setIsIOS(true);
+      // For iOS Safari, trigger the prompt after 6 seconds unconditionally
+      const timer = setTimeout(() => {
+        setShowBanner(true);
+      }, 6000);
+      return () => clearTimeout(timer);
     }
 
-    // Capture standard install prompts
+    // For Android/Chrome/Desktop, wait until beforeinstallprompt fires to set deferredPrompt
+    let timer: NodeJS.Timeout;
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      // Stagger display by 6 seconds once prompt is natively ready
+      timer = setTimeout(() => {
+        setShowBanner(true);
+      }, 6000);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
     return () => {
-      clearTimeout(timer);
+      if (timer) clearTimeout(timer);
       window.removeEventListener('beforeinstallprompt', handler);
     };
   }, []);
 
   async function handleInstall() {
-    if (!deferredPrompt) {
-      setShowManualGuide(true);
-      return;
-    }
+    if (!deferredPrompt) return;
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
@@ -63,10 +64,6 @@ export default function InstallPrompt() {
 
   function handleDismiss() {
     setShowBanner(false);
-    // Reset guide for next time
-    setTimeout(() => {
-      setShowManualGuide(false);
-    }, 500);
   }
 
   if (!showBanner) return null;
@@ -91,21 +88,11 @@ export default function InstallPrompt() {
           </div>
         </div>
 
-        {isIOS || showManualGuide ? (
+        {isIOS ? (
           <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-3">
             <p className="text-xs text-slate-600 text-center leading-relaxed font-semibold">
-              {isIOS ? (
-                <>
-                  Tap <span className="font-bold text-primary">Share</span>, then{' '}
-                  <span className="font-bold text-primary">Add to Home Screen</span>
-                </>
-              ) : (
-                <>
-                  Tap your browser's menu (three dots or share icon) and select{' '}
-                  <span className="font-bold text-primary">Install</span> or{' '}
-                  <span className="font-bold text-primary">Add to Home Screen</span>
-                </>
-              )}
+              Tap <span className="font-bold text-primary">Share</span>, then{' '}
+              <span className="font-bold text-primary">Add to Home Screen</span>
             </p>
             <div className="flex justify-center">
               <button
