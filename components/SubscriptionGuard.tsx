@@ -56,7 +56,12 @@ export default function SubscriptionGuard({
       {/* Show trial warning banner if <= 5 days left */}
       {planName === "free_trial" && daysRemaining <= 5 && (
         <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 text-xs text-center py-2.5 px-4 font-semibold flex items-center justify-center gap-2 relative z-50 shadow-md">
-          <span>⚠️ Your 14-day free trial expires in {daysRemaining} day{daysRemaining === 1 ? "" : "s"}.</span>
+          <span>
+            <span className="bg-slate-950 text-amber-400 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded mr-1.5">
+              Trial Notice
+            </span>
+            Your 14-day free trial expires in {daysRemaining} day{daysRemaining === 1 ? "" : "s"}.
+          </span>
           <a href="/subscription" className="underline font-extrabold hover:text-black transition-colors">
             Subscribe now &rarr;
           </a>

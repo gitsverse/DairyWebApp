@@ -66,7 +66,7 @@ export default function AdvancesPage() {
       alert(lang === "hi" ? "इस ग्राहक का फ़ोन नंबर मौजूद नहीं है।" : "Phone number missing for this customer.");
       return;
     }
-    const text = `Dear ${customer.name},\n\nGreetings from *${(customer as any).dairy_name}*! 🥛\n\nWe hope you're enjoying our dairy products! This is a friendly reminder regarding your pending payment of ₹${customer.balance.toFixed(2)}.\n\nPlease clear the dues at your earliest convenience. Thank you!`;
+    const text = `Dear ${customer.name},\n\nGreetings from *${(customer as any).dairy_name}*!\n\nWe hope you're enjoying our dairy products! This is a friendly reminder regarding your pending payment of ₹${customer.balance.toFixed(2)}.\n\nPlease clear the dues at your earliest convenience. Thank you!`;
     
     let phoneStr = customer.phone.replace(/\D/g, "");
     if (phoneStr && phoneStr.length === 10) {
@@ -140,7 +140,7 @@ export default function AdvancesPage() {
                   <tr key={c.customer_id} className="border-b border-border hover:bg-secondary/40 transition-colors">
                     <td className="px-4 py-3">
                       <p className="font-medium uppercase">{c.name}</p>
-                      {c.phone && <p className="text-xs text-muted-foreground mt-0.5">📞 {c.phone}</p>}
+                      {c.phone && <p className="text-xs text-muted-foreground mt-0.5">Phone: {c.phone}</p>}
                     </td>
                     <td className="px-4 py-3">
                       {c.balance < 0 ? (

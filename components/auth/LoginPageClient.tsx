@@ -19,12 +19,12 @@ export default function LoginPageClient() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-md rounded-3xl bg-white/90 backdrop-blur shadow-lift border border-border p-8 animate-fadeUp">
+      <div className="w-full max-w-md rounded-[32px] bg-white border border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] p-8 animate-fadeUp">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary font-black text-2xl mb-3 animate-float">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-[22px] bg-primary/10 text-primary font-black text-2xl mb-3">
             DP
           </div>
-          <h1 className="text-2xl font-bold text-primary">DairyPro</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">DairyPro</h1>
           <p className="text-sm text-slate-500 mt-1">{t("auth.loginHelp")}</p>
         </div>
 
@@ -46,7 +46,7 @@ export default function LoginPageClient() {
           />
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-foreground/80 mb-1">
+            <label htmlFor="password" className="block text-sm font-semibold text-slate-700 mb-1">
               {t("auth.password")}
               <span className="text-destructive ml-1">*</span>
             </label>
@@ -57,21 +57,21 @@ export default function LoginPageClient() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
-                className="flex h-10 w-full rounded-md border border-border bg-white/80 px-3 py-2 pr-10 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="flex h-11 w-full rounded-2xl border border-slate-200/40 bg-slate-100/60 px-4 py-2 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded text-muted-foreground hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-extrabold text-slate-400 hover:text-slate-700 tracking-widest uppercase transition-colors"
                 aria-label="Toggle password visibility"
               >
-                👁
+                {showPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>
 
           {error && (
-            <p className="text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2">
+            <p className="text-sm text-destructive bg-destructive/10 rounded-2xl px-3 py-2 text-center font-medium">
               {error.startsWith("auth.") ? t(error) : error}
             </p>
           )}
@@ -79,7 +79,7 @@ export default function LoginPageClient() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-70"
+            className="inline-flex h-11 w-full items-center justify-center rounded-full bg-primary text-white text-sm font-bold shadow-[0_2px_8px_rgba(45,122,58,0.15)] hover:shadow-[0_4px_12px_rgba(45,122,58,0.25)] hover:bg-primary/95 active:scale-95 disabled:opacity-70 disabled:pointer-events-none transition-all mt-2"
           >
             {isSubmitting ? t("auth.signingIn") : t("public.signIn")}
           </button>

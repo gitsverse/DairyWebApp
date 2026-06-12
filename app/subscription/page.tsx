@@ -6,6 +6,7 @@ import { supabaseClient } from "@/lib/supabaseClient";
 import AppShell from "@/components/layout/AppShell";
 import { loadRazorpayScript } from '@/lib/razorpay';
 import { QRCodeSVG } from 'qrcode.react';
+import { ShieldCheckIcon, ArrowPathIcon, CheckIcon } from "@heroicons/react/24/outline";
 
 type SubStatus = {
   plan_name: string;
@@ -191,7 +192,7 @@ export default function SubscriptionPage() {
               setToast({ msg: error.message, type: 'error' })
             } else {
               setToast({ 
-                msg: '✅ Plan activated! Redirecting...', 
+                msg: 'Plan activated! Redirecting...', 
                 type: 'success' 
               })
               setShowModal(false);
@@ -279,7 +280,7 @@ export default function SubscriptionPage() {
 
                 <div className="flex flex-col gap-2 mt-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-teal-500 text-lg">🛡️</span>
+                    <ShieldCheckIcon className="w-6 h-6 text-teal-500 shrink-0" />
                     {sub && sub.is_active && sub.days_remaining > 0 ? (
                       <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
                         EXPIRES IN{" "}
@@ -353,7 +354,7 @@ export default function SubscriptionPage() {
 
                   {selectedPlan === "yearly" && (
                     <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-3.5 mb-6 flex items-center gap-2">
-                      <span className="text-base text-teal-400">🔄</span>
+                      <ArrowPathIcon className="w-5 h-5 text-teal-400 shrink-0" />
                       <p className="text-xs font-bold text-slate-300 uppercase tracking-wide">
                         RENEWAL PRICE LOCK: RENEW AT ₹{priceYearly.toLocaleString("en-IN")}/YEAR (PRICE LOCKED)
                       </p>
@@ -365,7 +366,7 @@ export default function SubscriptionPage() {
                     <div className="space-y-3.5">
                       {leftFeatures.map((f) => (
                         <div key={f} className="flex items-start gap-2.5 text-slate-300 font-medium">
-                          <span className="text-teal-400 mt-0.5 text-xs">✅</span>
+                          <CheckIcon className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
                           <span className="text-xs leading-normal">{f}</span>
                         </div>
                       ))}
@@ -373,7 +374,7 @@ export default function SubscriptionPage() {
                     <div className="space-y-3.5">
                       {rightFeatures.map((f) => (
                         <div key={f} className="flex items-start gap-2.5 text-slate-300 font-medium">
-                          <span className="text-teal-400 mt-0.5 text-xs">✅</span>
+                          <CheckIcon className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
                           <span className="text-xs leading-normal">{f}</span>
                         </div>
                       ))}
@@ -452,13 +453,13 @@ export default function SubscriptionPage() {
               <div className="space-y-6 text-center py-4">
                 <div className="p-4 bg-teal-50/50 rounded-2xl border border-teal-100 text-left">
                   <p className="text-xs text-teal-800 leading-relaxed font-medium">
-                    ⚡ Pay securely using your Credit/Debit Card, UPI, Netbanking, or Wallet via Razorpay. The plan will activate instantly upon successful payment.
+                    Pay securely using your Credit/Debit Card, UPI, Netbanking, or Wallet via Razorpay. The plan will activate instantly upon successful payment.
                   </p>
                 </div>
                 {razorpayFailed && (
                   <div className="p-3 bg-rose-50/50 border border-rose-200 rounded-xl mb-4">
                     <p className="text-xs text-rose-600 font-bold">
-                      ⚠️ Razorpay failed to load. Please check your adblocker or try another payment method.
+                      Razorpay failed to load. Please check your adblocker or try another payment method.
                     </p>
                   </div>
                 )}

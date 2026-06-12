@@ -458,7 +458,8 @@ export default function BillStatement({
       <div className="p-4 bg-white">
         {viewMode === "grid" ? (
           <div>
-            <div className="grid grid-cols-3 gap-2 border-2 border-black p-2 rounded-xl bg-white">
+            <div className="overflow-x-auto w-full">
+              <div className="grid grid-cols-3 gap-2 border-2 border-black p-2 rounded-xl bg-white min-w-[580px] md:min-w-0">
               {/* Table 1 */}
               <table className="w-full text-xs border-collapse">
                 <thead>
@@ -576,8 +577,9 @@ export default function BillStatement({
                 </tbody>
               </table>
             </div>
+          </div>
 
-            <div className="mt-6 border-2 border-black rounded-xl p-4 bg-slate-50 space-y-2 text-sm font-bold text-slate-800">
+          <div className="mt-6 border-2 border-black rounded-xl p-4 bg-slate-50 space-y-2 text-sm font-bold text-slate-800">
               <div className="flex justify-between border-b-2 border-black pb-2">
                 <span>कुल दूध: {totalMilkLiters.toFixed(2)} लीटर</span>
                 <span>दर: ₹{detectedRate.toFixed(2)}/लीटर</span>

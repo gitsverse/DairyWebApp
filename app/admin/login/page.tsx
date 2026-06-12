@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabaseClient } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { ShieldCheckIcon } from "@heroicons/react/24/outline";
 
 const SUPERADMIN_EMAIL = "atifazmi2005@gmail.com";
 
@@ -48,8 +49,8 @@ export default function AdminLogin() {
 
       <div className="relative z-10 w-full max-w-md bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl animate-fadeUp">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/20">
-            <span className="text-3xl text-white">🛡️</span>
+          <div className="w-16 h-16 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/20 text-white">
+            <ShieldCheckIcon className="w-8 h-8" />
           </div>
           <h1 className="text-white text-2xl font-bold tracking-tight">
             Superadmin Login

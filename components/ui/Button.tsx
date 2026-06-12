@@ -15,7 +15,7 @@ const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-[24px] font-bold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-95 shadow-sm";
+    "inline-flex items-center justify-center rounded-full font-bold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-95 shadow-sm";
 
   const sizeClasses = {
     sm: "px-3 py-1.5 text-xs",
@@ -24,9 +24,9 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const variantClasses = {
-    primary: "bg-gradient-to-r from-primary to-emerald-500 text-white hover:shadow-[0_4px_14px_0_rgba(5,150,105,0.39)] border border-transparent hover:brightness-110",
+    primary: "bg-primary text-white hover:bg-primary/95 border border-transparent shadow-[0_2px_8px_rgba(45,122,58,0.15)] hover:shadow-[0_4px_12px_rgba(45,122,58,0.25)]",
     destructive:
-      "bg-gradient-to-r from-red-600 to-rose-500 text-white hover:shadow-[0_4px_14px_0_rgba(225,29,72,0.39)] border border-transparent",
+      "bg-red-600 text-white hover:bg-red-700 border border-transparent shadow-[0_2px_8px_rgba(220,38,38,0.15)] hover:shadow-[0_4px_12px_rgba(220,38,38,0.25)]",
     outline:
       "border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 shadow-sm",
     ghost: "hover:bg-slate-100 text-slate-600 hover:text-slate-900 shadow-none",

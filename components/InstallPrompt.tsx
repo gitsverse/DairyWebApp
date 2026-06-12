@@ -7,6 +7,13 @@ export default function InstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
+    // Register Service Worker client-side
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker registered successfully:', reg.scope))
+        .catch(err => console.error('Service Worker registration failed:', err));
+    }
+
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       return;
@@ -18,11 +25,6 @@ export default function InstallPrompt() {
       return;
     }
 
-    // Delay showing the banner for 6 seconds to prevent overlapping with the welcome popup
-    const timer = setTimeout(() => {
-      setShowBanner(true);
-    }, 6000);
-
     // Detect iOS Safari
     const ua = window.navigator.userAgent;
     const webkit = !/CriOS/i.test(ua) && /WebKit/i.test(ua);
@@ -31,16 +33,27 @@ export default function InstallPrompt() {
 
     if (isSafari) {
       setIsIOS(true);
+      // For iOS Safari, trigger the prompt after 6 seconds
+      const timer = setTimeout(() => {
+        setShowBanner(true);
+      }, 6000);
+      return () => clearTimeout(timer);
     }
 
+    // For Android/Chrome/Desktop, wait until beforeinstallprompt fires to set deferredPrompt
+    let timer: NodeJS.Timeout;
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      // Stagger display by 6 seconds once prompt is ready
+      timer = setTimeout(() => {
+        setShowBanner(true);
+      }, 6000);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
     return () => {
-      clearTimeout(timer);
+      if (timer) clearTimeout(timer);
       window.removeEventListener('beforeinstallprompt', handler);
     };
   }, []);

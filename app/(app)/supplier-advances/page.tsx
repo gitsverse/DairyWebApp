@@ -115,8 +115,8 @@ export default function SupplierAdvancesPage() {
       return;
     }
     const text = lang === "hi"
-      ? `नमस्ते ${supplier.name},\n\n*${supplier.dairy_name}* की ओर से अभिवादन! 🥛\n\nआपके खाते में ₹${supplier.balance.toFixed(2)} का भुगतान बकाया है। कृपया जल्द से जल्द भुगतान करें।\n\nधन्यवाद!`
-      : `Dear ${supplier.name},\n\nGreetings from *${supplier.dairy_name}*! 🥛\n\nThis is a reminder that we owe you ₹${supplier.balance.toFixed(2)} for milk supplies. We will settle this soon.\n\nThank you!`;
+      ? `नमस्ते ${supplier.name},\n\n*${supplier.dairy_name}* की ओर से अभिवादन!\n\nआपके खाते में ₹${supplier.balance.toFixed(2)} का भुगतान बकाया है। कृपया जल्द से जल्द भुगतान करें।\n\nधन्यवाद!`
+      : `Dear ${supplier.name},\n\nGreetings from *${supplier.dairy_name}*!\n\nThis is a reminder that we owe you ₹${supplier.balance.toFixed(2)} for milk supplies. We will settle this soon.\n\nThank you!`;
 
     let phoneStr = supplier.phone.replace(/\D/g, "");
     if (phoneStr && phoneStr.length === 10) phoneStr = "91" + phoneStr;
@@ -192,7 +192,7 @@ export default function SupplierAdvancesPage() {
                   <tr key={s.supplier_id} className="border-b border-border hover:bg-secondary/40 transition-colors">
                     <td className="px-4 py-3">
                       <p className="font-medium uppercase">{s.name}</p>
-                      {s.phone && <p className="text-xs text-muted-foreground mt-0.5">📞 {s.phone}</p>}
+                      {s.phone && <p className="text-xs text-muted-foreground mt-0.5">Phone: {s.phone}</p>}
                     </td>
                     <td className="px-4 py-3">
                       {s.balance > 0 ? (

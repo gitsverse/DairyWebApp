@@ -441,8 +441,8 @@ const BillingPage = () => {
       : startDate && endDate ? `${formatDate(startDate)} → ${formatDate(endDate)}` : "—";
 
     const text = selectedCustomers.length === 1 
-      ? `Dear ${customerName},\n\nGreetings from *${profile?.dairy_name || "Dairy"}*! 🥛\n\nPlease find your bill for the period ${sharePeriodLabel} linked below.\n\nYour net payable amount is: *₹${finalSummary.finalBalance.toFixed(2)}*\n\n📄 *Download your bill here:*\n${shareUrl}\n\nThank you for choosing us!`
-      : `Greetings from *${profile?.dairy_name || "Dairy"}*! 🥛\n\nPlease find the combined bills for ${customerName} for the period ${sharePeriodLabel} linked below.\n\n📄 *Download the bills here:*\n${shareUrl}\n\nThank you!`;
+      ? `Dear ${customerName},\n\nGreetings from *${profile?.dairy_name || "Dairy"}*!\n\nPlease find your bill for the period ${sharePeriodLabel} linked below.\n\nYour net payable amount is: *₹${finalSummary.finalBalance.toFixed(2)}*\n\n*Download your bill here:*\n${shareUrl}\n\nThank you for choosing us!`
+      : `Greetings from *${profile?.dairy_name || "Dairy"}*!\n\nPlease find the combined bills for ${customerName} for the period ${sharePeriodLabel} linked below.\n\n*Download the bills here:*\n${shareUrl}\n\nThank you!`;
     
     // Clean phone number (remove spaces, dashes, etc.)
     let phoneStr = customerPhone.replace(/\D/g, "");

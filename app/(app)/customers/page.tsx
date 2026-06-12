@@ -234,7 +234,7 @@ const CustomersPage = () => {
       alert(lang === "hi" ? "इस ग्राहक का फ़ोन नंबर मौजूद नहीं है।" : "Phone number missing for this customer.");
       return;
     }
-    const text = `Dear ${customer.name},\n\nGreetings from *${customer.dairy_name || "Dairy"}*! 🥛\n\nWe hope you're enjoying our dairy products! This is a friendly reminder regarding your pending payment of ₹${customer.balance.toFixed(2)}.\n\nPlease clear the dues at your earliest convenience. Thank you!`;
+    const text = `Dear ${customer.name},\n\nGreetings from *${customer.dairy_name || "Dairy"}*!\n\nWe hope you're enjoying our dairy products! This is a friendly reminder regarding your pending payment of ₹${customer.balance.toFixed(2)}.\n\nPlease clear the dues at your earliest convenience. Thank you!`;
     
     let phoneStr = customer.phone.replace(/\D/g, "");
     if (phoneStr && phoneStr.length === 10) {

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabaseClient } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { ShieldCheckIcon, CommandLineIcon } from "@heroicons/react/24/outline";
 
 type UserRow = {
   user_id: string;
@@ -76,7 +77,7 @@ export default function AdminDashboard() {
         <div className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
-              <span>🛡️</span> Control Panel
+              <ShieldCheckIcon className="w-8 h-8 text-blue-500 shrink-0" /> Control Panel
             </h1>
             <p className="text-slate-400 text-sm mt-1">Superadmin portal for DairyWeb SaaS platform</p>
           </div>
@@ -99,7 +100,7 @@ export default function AdminDashboard() {
         {/* Adjust Plan Days */}
         <div className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-3xl p-6 mb-10 shadow-xl">
           <h2 className="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-            <span>⚡</span> Adjust User Plan Days
+            <CommandLineIcon className="w-5 h-5 text-blue-500 shrink-0" /> Adjust User Plan Days
           </h2>
           <div className="flex gap-4 flex-wrap items-end">
             <div className="flex-1 min-w-[280px]">

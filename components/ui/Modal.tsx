@@ -28,20 +28,23 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6 text-foreground"
+        className="bg-white rounded-[32px] shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-6 text-foreground relative"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <div className="flex justify-between items-center border-b border-border pb-3 mb-4">
-          <h2 id="modal-title" className="text-xl font-semibold">
+        {/* iOS Drag Handle */}
+        <div className="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-5" />
+
+        <div className="flex justify-between items-center mb-5">
+          <h2 id="modal-title" className="text-xl font-bold text-slate-900 tracking-tight">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground text-2xl leading-none px-1"
+            className="text-slate-400 hover:text-slate-600 text-2xl leading-none px-1"
             aria-label="Close"
           >
             &times;
