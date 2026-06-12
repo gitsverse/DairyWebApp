@@ -5,7 +5,21 @@ import { useEffect, useState } from 'react';
 export default function RefreshNotificationPopup() {
   const [visible, setVisible] = useState(false);
 
+  const [greeting, setGreeting] = useState("Good morning!");
+
   useEffect(() => {
+    // Determine greeting based on current local hour
+    const hour = new Date().getHours();
+    if (hour >= 0 && hour < 12) {
+      setGreeting("Good morning!");
+    } else if (hour >= 12 && hour < 16) {
+      setGreeting("Good afternoon!");
+    } else if (hour >= 16 && hour < 21) {
+      setGreeting("Good evening!");
+    } else {
+      setGreeting("Good night!");
+    }
+
     // Slight delay to ensure entry animation is smooth
     const showTimer = setTimeout(() => {
       setVisible(true);
@@ -35,7 +49,7 @@ export default function RefreshNotificationPopup() {
         <div className="flex items-center gap-3">
           <div className="flex flex-col">
             <span className="text-sm font-bold text-gray-800">
-              Good morning!
+              {greeting}
             </span>
             <span className="text-xs text-slate-500 font-medium">
               Today's milk entries are pending.
