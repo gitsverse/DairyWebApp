@@ -6,6 +6,15 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { useI18n } from "@/components/i18n/LanguageProvider";
 import { formatDate } from "@/lib/dateUtils";
+import {
+  UserGroupIcon,
+  ClipboardDocumentListIcon,
+  BanknotesIcon,
+  WalletIcon,
+  PlusIcon,
+  UserPlusIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
 
 interface DashboardData {
   totalCustomers: number;
@@ -99,7 +108,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <Button onClick={fetchDashboard} variant="outline" className="self-start sm:self-center">
-          🔄 {lang === "hi" ? "ताज़ा करें" : "Refresh"}
+          {lang === "hi" ? "ताज़ा करें" : "Refresh"}
         </Button>
       </div>
 
@@ -112,7 +121,7 @@ export default function DashboardPage() {
             <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
               {lang === "hi" ? "कुल ग्राहक" : "Total Customers"}
             </span>
-            <span className="text-2xl" role="img" aria-label="customers">👥</span>
+            <UserGroupIcon className="w-5 h-5 text-slate-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-primary transition-colors">
             {data.totalCustomers}
@@ -127,7 +136,7 @@ export default function DashboardPage() {
             <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
               {lang === "hi" ? "आज का दूध" : "Today's Milk"}
             </span>
-            <span className="text-2xl" role="img" aria-label="milk">🥛</span>
+            <ClipboardDocumentListIcon className="w-5 h-5 text-slate-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-black text-slate-900 group-hover:text-primary transition-colors">
             {data.todaysMilk.toFixed(1)} <span className="text-xs sm:text-sm font-bold text-slate-400">Liters</span>
@@ -142,7 +151,7 @@ export default function DashboardPage() {
             <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
               {lang === "hi" ? "कुल कलेक्शन" : "Total Collections"}
             </span>
-            <span className="text-2xl" role="img" aria-label="collections">₹</span>
+            <BanknotesIcon className="w-5 h-5 text-slate-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-black text-emerald-800">
             ₹{data.totalCollections.toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
@@ -157,7 +166,7 @@ export default function DashboardPage() {
             <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
               {lang === "hi" ? "बकाया राशि" : "Outstanding Balance"}
             </span>
-            <span className="text-2xl" role="img" aria-label="outstanding">💰</span>
+            <WalletIcon className="w-5 h-5 text-slate-400" />
           </div>
           <p className={`text-2xl sm:text-3xl font-black ${data.outstandingBalance > 0 ? "text-red-600" : "text-emerald-700"}`}>
             ₹{Math.abs(data.outstandingBalance).toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
@@ -172,20 +181,20 @@ export default function DashboardPage() {
       <Card title={lang === "hi" ? "त्वरित गतिविधियां" : "Quick Actions"}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 py-2">
           <Link href="/entries">
-            <button className="flex items-center justify-center gap-3 w-full bg-gradient-to-r from-primary to-green-600 text-white font-bold py-3.5 px-6 rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-md">
-              <span className="text-xl">📝</span>
+            <button className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-primary to-green-600 text-white font-bold py-3 px-6 rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-md duration-200">
+              <PlusIcon className="w-4 h-4 shrink-0" />
               <span>{lang === "hi" ? "एंट्री जोड़ें" : "Add Entry"}</span>
             </button>
           </Link>
           <Link href="/customers?add=true">
-            <button className="flex items-center justify-center gap-3 w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3.5 px-6 rounded-2xl active:scale-95 transition-all shadow-sm">
-              <span className="text-xl">👥</span>
+            <button className="flex items-center justify-center gap-2 w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-6 rounded-2xl active:scale-95 transition-all shadow-sm duration-200">
+              <UserPlusIcon className="w-4 h-4 shrink-0 text-slate-500" />
               <span>{lang === "hi" ? "नया ग्राहक" : "Add Customer"}</span>
             </button>
           </Link>
           <Link href="/billing">
-            <button className="flex items-center justify-center gap-3 w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3.5 px-6 rounded-2xl active:scale-95 transition-all shadow-sm">
-              <span className="text-xl">🧾</span>
+            <button className="flex items-center justify-center gap-2 w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-6 rounded-2xl active:scale-95 transition-all shadow-sm duration-200">
+              <DocumentTextIcon className="w-4 h-4 shrink-0 text-slate-500" />
               <span>{lang === "hi" ? "बिल बनाएं" : "Generate Bill"}</span>
             </button>
           </Link>

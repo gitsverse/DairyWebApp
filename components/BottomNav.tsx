@@ -2,17 +2,24 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useI18n } from '@/components/i18n/LanguageProvider'
+import {
+  HomeIcon,
+  UserGroupIcon,
+  ClipboardDocumentListIcon,
+  DocumentChartBarIcon,
+  BanknotesIcon,
+} from "@heroicons/react/24/outline";
 
 export default function BottomNav() {
   const pathname = usePathname()
   const { t } = useI18n()
 
   const navItems = [
-    { href: '/dashboard',     icon: '🏠', label: t('nav.dashboard') },
-    { href: '/customers',     icon: '👥', label: t('nav.customers') },
-    { href: '/entries',       icon: '📝', label: t('nav.entries') },
-    { href: '/analytics',     icon: '📊', label: t('nav.analytics') },
-    { href: '/billing',       icon: '💰', label: t('nav.billing') },
+    { href: '/dashboard',     icon: HomeIcon, label: t('nav.dashboard') },
+    { href: '/customers',     icon: UserGroupIcon, label: t('nav.customers') },
+    { href: '/entries',       icon: ClipboardDocumentListIcon, label: t('nav.entries') },
+    { href: '/analytics',     icon: DocumentChartBarIcon, label: t('nav.analytics') },
+    { href: '/billing',       icon: BanknotesIcon, label: t('nav.billing') },
   ]
 
   return (
@@ -35,9 +42,7 @@ export default function BottomNav() {
                       : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                     }`}
                 >
-                  <span className="text-xl leading-none">
-                    {item.icon}
-                  </span>
+                  <item.icon className="w-5 h-5 shrink-0" />
                   <span className={`text-[10px] font-bold mt-1 truncate max-w-[60px] text-center
                     ${isActive ? 'text-primary' : 'text-gray-400'}`}>
                     {item.label}

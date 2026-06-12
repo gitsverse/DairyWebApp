@@ -68,11 +68,16 @@ export default function InstallPrompt() {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-sm px-4 animate-slide-in">
-      <div className="bg-white border border-slate-200/80 rounded-3xl shadow-lift p-5 flex flex-col gap-4">
+    <div className="fixed top-4 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none">
+      <div 
+        className="w-full max-w-sm bg-white border border-slate-200/80 rounded-3xl shadow-lift p-5 flex flex-col gap-4 pointer-events-auto"
+        style={{
+          animation: 'slideDownPrompt 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        }}
+      >
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-2xl shrink-0">
-            🥛
+          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary font-black text-lg shrink-0">
+            DP
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-bold text-gray-800 text-sm">Install DairyPro</p>
@@ -114,6 +119,18 @@ export default function InstallPrompt() {
           </div>
         )}
       </div>
+      <style jsx global>{`
+        @keyframes slideDownPrompt {
+          0% {
+            transform: translate3d(0, -24px, 0) scale(0.97);
+            opacity: 0;
+          }
+          100% {
+            transform: translate3d(0, 0, 0) scale(1);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import {
   ShoppingCartIcon,
   WalletIcon,
   ClipboardDocumentListIcon,
+  LockClosedIcon,
 } from "@heroicons/react/24/outline";
 import Button from "@/components/ui/Button";
 import { useI18n } from "@/components/i18n/LanguageProvider";
@@ -95,7 +96,7 @@ const Sidebar = ({ mobileOpen = false, onNavigate }: SidebarProps) => {
         <item.icon className={`mr-3 h-5 w-5 shrink-0 transition-transform duration-300 ${disabled ? "text-slate-400 opacity-60" : pathname.startsWith(item.href) ? "text-primary opacity-100 scale-110" : "opacity-70 group-hover:scale-110 group-hover:text-primary"}`} />
         <span className="relative z-10">{t(item.key)}</span>
         {disabled && (
-          <span className="ml-auto text-xs opacity-60">🔒</span>
+          <LockClosedIcon className="ml-auto h-4 w-4 text-slate-400 opacity-60" />
         )}
       </Link>
     );

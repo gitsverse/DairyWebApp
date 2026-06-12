@@ -25,22 +25,19 @@ export default function RefreshNotificationPopup() {
   if (!visible) return null;
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-[90vw] sm:max-w-md px-4 pointer-events-none">
+    <div className="fixed top-4 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none">
       <div
-        className="bg-white border-l-4 border-primary rounded-2xl shadow-2xl p-4 flex items-center justify-between gap-3 pointer-events-auto transition-all duration-500 ease-out transform translate-y-0 opacity-100"
+        className="w-full max-w-sm bg-white border-l-4 border-primary rounded-2xl shadow-2xl p-4 flex items-center justify-between gap-3 pointer-events-auto transition-all duration-500 ease-out opacity-100"
         style={{
           animation: 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         }}
       >
         <div className="flex items-center gap-3">
-          <span className="text-2xl shrink-0" role="img" aria-label="milk">
-            🥛
-          </span>
           <div className="flex flex-col">
             <span className="text-sm font-bold text-gray-800">
               Good morning!
             </span>
-            <span className="text-xs text-gray-500 font-medium">
+            <span className="text-xs text-slate-500 font-medium">
               Today's milk entries are pending.
             </span>
           </div>
@@ -56,11 +53,11 @@ export default function RefreshNotificationPopup() {
       <style jsx global>{`
         @keyframes slideDown {
           0% {
-            transform: translate3d(-50%, -24px, 0) scale(0.97);
+            transform: translate3d(0, -24px, 0) scale(0.97);
             opacity: 0;
           }
           100% {
-            transform: translate3d(-50%, 0, 0) scale(1);
+            transform: translate3d(0, 0, 0) scale(1);
             opacity: 1;
           }
         }
