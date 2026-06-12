@@ -5,6 +5,7 @@ export default function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [showManualGuide, setShowManualGuide] = useState(false);
 
   useEffect(() => {
     // Register Service Worker client-side
@@ -19,11 +20,10 @@ export default function InstallPrompt() {
       return;
     }
 
-    // Check if user dismissed it in this session to prevent repeated popups
-    const dismissed = sessionStorage.getItem('pwa_prompt_dismissed');
-    if (dismissed === 'true') {
-      return;
-    }
+    // Delay showing the banner for 6 seconds unconditionally
+    const timer = setTimeout(() => {
+      setShowBanner(true);
+    }, 6000);
 
     // Detect iOS Safari
     const ua = window.navigator.userAgent;
@@ -33,35 +33,24 @@ export default function InstallPrompt() {
 
     if (isSafari) {
       setIsIOS(true);
-      // For iOS Safari, trigger the prompt after 6 seconds
-      const timer = setTimeout(() => {
-        setShowBanner(true);
-      }, 6000);
-      return () => clearTimeout(timer);
     }
 
-    // For Android/Chrome/Desktop, wait until beforeinstallprompt fires to set deferredPrompt
-    let timer: NodeJS.Timeout;
+    // Capture standard install prompts
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      // Stagger display by 6 seconds once prompt is ready
-      timer = setTimeout(() => {
-        setShowBanner(true);
-      }, 6000);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
     return () => {
-      if (timer) clearTimeout(timer);
+      clearTimeout(timer);
       window.removeEventListener('beforeinstallprompt', handler);
     };
   }, []);
 
   async function handleInstall() {
     if (!deferredPrompt) {
-      alert("PWA installation is not supported by your browser or the app is already installed. You can install it via your browser's menu (e.g. click the three dots/share icon and select 'Install' or 'Add to Home Screen').");
-      setShowBanner(false);
+      setShowManualGuide(true);
       return;
     }
     deferredPrompt.prompt();
@@ -73,9 +62,11 @@ export default function InstallPrompt() {
   }
 
   function handleDismiss() {
-    // Dismiss for the current session to prevent annoying the user
-    sessionStorage.setItem('pwa_prompt_dismissed', 'true');
     setShowBanner(false);
+    // Reset guide for next time
+    setTimeout(() => {
+      setShowManualGuide(false);
+    }, 500);
   }
 
   if (!showBanner) return null;
@@ -100,18 +91,28 @@ export default function InstallPrompt() {
           </div>
         </div>
 
-        {isIOS ? (
-          <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+        {isIOS || showManualGuide ? (
+          <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-3">
             <p className="text-xs text-slate-600 text-center leading-relaxed font-semibold">
-              Tap <span className="font-bold text-primary">Share</span>, then{' '}
-              <span className="font-bold text-primary">Add to Home Screen</span>
+              {isIOS ? (
+                <>
+                  Tap <span className="font-bold text-primary">Share</span>, then{' '}
+                  <span className="font-bold text-primary">Add to Home Screen</span>
+                </>
+              ) : (
+                <>
+                  Tap your browser's menu (three dots or share icon) and select{' '}
+                  <span className="font-bold text-primary">Install</span> or{' '}
+                  <span className="font-bold text-primary">Add to Home Screen</span>
+                </>
+              )}
             </p>
-            <div className="flex justify-center mt-3">
+            <div className="flex justify-center">
               <button
                 onClick={handleDismiss}
                 className="text-slate-400 text-xs px-4 py-2 rounded-xl hover:bg-slate-100 w-full font-bold transition duration-200"
               >
-                Maybe Later
+                Close Guide
               </button>
             </div>
           </div>
