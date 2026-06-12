@@ -16,41 +16,38 @@ export default function BottomNav() {
   ]
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 
-                    bg-white border-t border-gray-200 
-                    z-40 md:hidden
-                    pb-safe">
-      <div className="flex items-center justify-around py-2">
-        {navItems.map(item => {
-          const isActive = pathname === item.href
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex flex-col items-center 
-                gap-0.5 px-3 py-1 rounded-xl 
-                touch-manipulation min-w-[60px]
-                transition-colors
-                ${isActive 
-                  ? 'text-teal-600' 
-                  : 'text-gray-400 hover:text-gray-600'
-                }`}
-            >
-              <span className="text-xl leading-none">
-                {item.icon}
-              </span>
-              <span className={`text-[10px] font-medium mt-1 truncate max-w-[60px] text-center
-                ${isActive ? 'text-teal-600' : 'text-gray-400'}`}>
-                {item.label}
-              </span>
-              {isActive && (
-                <div className="w-1 h-1 bg-teal-500 
-                                rounded-full mt-0.5" />
-              )}
-            </Link>
-          )
-        })}
+    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden pointer-events-none pb-safe">
+      <div className="p-3">
+        <nav className="bg-white/90 backdrop-blur-md border border-gray-200/50 shadow-lg rounded-[28px] pointer-events-auto">
+          <div className="flex items-center justify-around py-2 px-1">
+            {navItems.map(item => {
+              const isActive = pathname === item.href
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex flex-col items-center 
+                    gap-0.5 px-3 py-1.5 rounded-[20px] 
+                    touch-manipulation min-w-[60px]
+                    transition-all duration-300
+                    ${isActive 
+                      ? 'bg-teal-50 text-teal-600 scale-105' 
+                      : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                    }`}
+                >
+                  <span className="text-xl leading-none">
+                    {item.icon}
+                  </span>
+                  <span className={`text-[10px] font-bold mt-1 truncate max-w-[60px] text-center
+                    ${isActive ? 'text-teal-600' : 'text-gray-400'}`}>
+                    {item.label}
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </nav>
       </div>
-    </nav>
+    </div>
   )
 }

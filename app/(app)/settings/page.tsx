@@ -77,7 +77,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-6">
+    <div className="mx-auto w-full max-w-2xl space-y-6 pb-[120px] pb-safe">
       <h1 className="text-3xl font-bold text-foreground">{t("settings.title")}</h1>
       <p className="text-sm text-muted-foreground">
         These details appear on bills and can be reused across the app.

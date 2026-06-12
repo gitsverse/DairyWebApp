@@ -3,7 +3,7 @@ import { Outfit } from "next/font/google";
 import "../styles/globals.css";
 import ClientI18nProvider from "@/components/i18n/ClientI18nProvider";
 import { ToastProvider } from "@/components/ui/toast";
-import PWAInstallBanner from "@/components/PWAInstallBanner";
+import InstallPrompt from "@/components/InstallPrompt";
 
 const outfit = Outfit({ 
   subsets: ["latin", "latin-ext"], 
@@ -23,7 +23,7 @@ export const metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "DairyWeb",
+    title: "Dairy App",
   },
 };
 
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body suppressHydrationWarning className="min-h-screen antialiased bg-page text-foreground font-sans">
         <ClientI18nProvider>
           <ToastProvider>
-            <PWAInstallBanner />
+            <InstallPrompt />
             {children}
           </ToastProvider>
         </ClientI18nProvider>
