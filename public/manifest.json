@@ -3,7 +3,7 @@
   "short_name": "Dairy App",
   "description": "Complete dairy business management app",
   "start_url": "/",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#fafaf7",
   "theme_color": "#2d7a3a",
   "orientation": "portrait",
