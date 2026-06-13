@@ -7,7 +7,8 @@ self.addEventListener('install', (event) => {
         '/',
         '/manifest.json',
         '/icons/icon-192x192.png',
-        '/icons/icon-512x512.png'
+        '/icons/icon-512x512.png',
+        '/icons/dairy_app_icon.png'
       ]);
     })
   );

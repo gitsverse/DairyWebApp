@@ -54,7 +54,7 @@ export default function GlobalSplashScreen() {
         {/* Pulsing logo wrapper */}
         <div className="relative w-28 h-28 rounded-[28px] bg-white shadow-lift flex items-center justify-center overflow-hidden animate-pulse">
           <img
-            src="/icons/dairy_app_icon.png"
+            src="/icons/icon-512x512.png"
             alt="Dairy App Logo"
             className="w-[112px] h-[112px] object-cover rounded-[28px]"
           />
