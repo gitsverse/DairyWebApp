@@ -5,7 +5,6 @@ import ClientI18nProvider from "@/components/i18n/ClientI18nProvider";
 import { ToastProvider } from "@/components/ui/toast";
 import InstallPrompt from "@/components/InstallPrompt";
 import RefreshNotificationPopup from "@/components/RefreshNotificationPopup";
-import GlobalSplashScreen from "@/components/GlobalSplashScreen";
 
 const outfit = Outfit({ 
   subsets: ["latin", "latin-ext"], 
@@ -43,7 +42,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body suppressHydrationWarning className="min-h-screen antialiased bg-page text-foreground font-sans">
         <ClientI18nProvider>
           <ToastProvider>
-            <GlobalSplashScreen />
             <InstallPrompt />
             <RefreshNotificationPopup />
             {children}
